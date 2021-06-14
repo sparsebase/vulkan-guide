@@ -1,4 +1,6 @@
 set(CMAKE_CXX_STANDARD 17)
+
+find_package(assimp REQUIRED)
 # Add source to this project's executable.
 add_executable (baker
 "asset_main.cpp")

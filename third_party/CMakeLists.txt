@@ -1,4 +1,5 @@
 find_package(Vulkan REQUIRED)
+find_package(SDL2 CONFIG REQUIRED)
 include(ExternalProject)
 
 add_library(vkbootstrap STATIC)
@@ -31,8 +32,8 @@ target_include_directories(nvtt INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/nvidia-te
 
 #set(nvttfolder "${PROJECT_SOURCE_DIR}/libs/Release")
 
-set(nvttfolder "${PROJECT_SOURCE_DIR}/libs/$<IF:$<CONFIG:Debug>,Debug,Release>")
-
+set(nvttfolder "${PROJECT_SOURCE_DIR}/libs/") #$<IF:$<CONFIG:Debug>,Debug,Release>
+message(STATUS "nvttfolder: ${nvttfolder}")
 target_link_libraries(nvtt INTERFACE "${nvttfolder}/nvtt.lib")
 target_link_libraries(nvtt INTERFACE "${nvttfolder}/bc6h.lib")
 target_link_libraries(nvtt INTERFACE "${nvttfolder}/bc7.lib")
@@ -90,11 +91,11 @@ target_sources(tinyobjloader PRIVATE
 
 target_include_directories(tinyobjloader PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/tinyobjloader" )
 
-set(sdl2_DIR "SDL_PATH" CACHE FILEPATH "Path to SDL2")
-add_library(sdl2 INTERFACE)
-target_include_directories(sdl2 INTERFACE "${sdl2_DIR}/include" "${sdl2_image_DIR}/include" )
-target_link_directories(sdl2 INTERFACE "${sdl2_DIR}/lib/x64" "${sdl2_image_DIR}/lib/x64")
-target_link_libraries(sdl2 INTERFACE SDL2 SDL2main)
+#set(sdl2_DIR "SDL_PATH" CACHE FILEPATH "Path to SDL2")
+#add_library(sdl2 INTERFACE)
+#target_include_directories(sdl2 INTERFACE "${sdl2_DIR}/include" "${sdl2_image_DIR}/include" )
+#target_link_directories(sdl2 INTERFACE "${sdl2_DIR}/lib/x64" "${sdl2_image_DIR}/lib/x64")
+#target_link_libraries(sdl2 INTERFACE SDL2 SDL2main)
 
 add_library(imgui STATIC)
 
@@ -115,21 +116,21 @@ target_sources(imgui PRIVATE
 "${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_impl_sdl.cpp"
 )
 
-target_link_libraries(imgui PUBLIC Vulkan::Vulkan sdl2)
+target_link_libraries(imgui PUBLIC Vulkan::Vulkan SDL2::SDL2 SDL2::SDL2main)
 
 
 target_include_directories(stb_image INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/stb_image" )
 
-add_library(assimp INTERFACE)
+#add_library(assimp INTERFACE)
 
 
-set(assimp_dir "${CMAKE_CURRENT_SOURCE_DIR}/assimp_build")
-set(assimp_dll "${CMAKE_CURRENT_SOURCE_DIR}/assimp_build/code/Release/assimp-vc142-mt.dll")
-set(assimp_lib "${CMAKE_CURRENT_SOURCE_DIR}/assimp_build/code/Release/assimp-vc142-mt.lib")
+#set(assimp_dir "${CMAKE_CURRENT_SOURCE_DIR}/assimp_build")
+#set(assimp_dll "${CMAKE_CURRENT_SOURCE_DIR}/assimp_build/code/Release/assimp-vc142-mt.dll")
+#set(assimp_lib "${CMAKE_CURRENT_SOURCE_DIR}/assimp_build/code/Release/assimp-vc142-mt.lib")
 
 
-target_include_directories(assimp INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/assimp/include")
-target_link_libraries(assimp INTERFACE "${assimp_lib}" )
+#target_include_directories(assimp INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/assimp/include")
+#target_link_libraries(assimp INTERFACE "${assimp_lib}" )
 
 
 ## FMT LIB

@@ -84,35 +84,35 @@ static CGU_Vec3f fabs(CMP_IN CGU_Vec3f Color)
 static CGU_Vec3f round(CMP_IN CGU_Vec3f Color)
 {
     CGU_Vec3f ColorRound;
-    ColorRound.x = std::round(Color.x);
-    ColorRound.y = std::round(Color.y);
-    ColorRound.z = std::round(Color.z);
+    ColorRound.x = round(Color.x);
+    ColorRound.y = round(Color.y);
+    ColorRound.z = round(Color.z);
     return ColorRound;
 }
 
 static CGU_Vec2f round(CMP_IN CGU_Vec2f Color)
 {
     CGU_Vec2f ColorRound;
-    ColorRound.x = std::round(Color.x);
-    ColorRound.y = std::round(Color.y);
+    ColorRound.x = round(Color.x);
+    ColorRound.y = round(Color.y);
     return ColorRound;
 }
 
 static CGU_Vec3f ceil(CMP_IN CGU_Vec3f Color)
 {
     CGU_Vec3f ColorCeil;
-    ColorCeil.x = std::ceil(Color.x);
-    ColorCeil.y = std::ceil(Color.y);
-    ColorCeil.z = std::ceil(Color.z);
+    ColorCeil.x = ceil(Color.x);
+    ColorCeil.y = ceil(Color.y);
+    ColorCeil.z = ceil(Color.z);
     return ColorCeil;
 }
 
 static CGU_Vec3f floor(CMP_IN CGU_Vec3f Color)
 {
     CGU_Vec3f Colorfloor;
-    Colorfloor.x = std::floor(Color.x);
-    Colorfloor.y = std::floor(Color.y);
-    Colorfloor.z = std::floor(Color.z);
+    Colorfloor.x = floor(Color.x);
+    Colorfloor.y = floor(Color.y);
+    Colorfloor.z = floor(Color.z);
     return Colorfloor;
 }
 

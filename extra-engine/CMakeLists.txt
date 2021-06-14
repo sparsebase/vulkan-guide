@@ -1,5 +1,6 @@
 set(CMAKE_CXX_STANDARD 17)
 # Add source to this project's executable.
+find_package(SDL2 CONFIG REQUIRED)
 
 
 
@@ -20,4 +21,4 @@ target_compile_definitions(extra PUBLIC GLM_FORCE_DEPTH_ZERO_TO_ONE GLM_FORCE_LE
 target_precompile_headers(extra PUBLIC "vk_types.h" "<unordered_map>" "<vector>" "<iostream>" "<fstream>" "<string>" )
 target_link_libraries(extra vkbootstrap vma glm tinyobjloader imgui stb_image spirv_reflect)
 
-target_link_libraries(extra Vulkan::Vulkan sdl2 assetlib tracy fmt_lib)
+target_link_libraries(extra Vulkan::Vulkan SDL2::SDL2 SDL2::SDL2main assetlib tracy fmt_lib)
