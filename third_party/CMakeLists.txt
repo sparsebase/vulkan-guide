@@ -21,13 +21,12 @@ add_library(lz4 STATIC)
 
 add_subdirectory(gltf)
 
-ExternalProject_Add(nvtools
-SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/nvidia-texture-tools"
-#BINARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/nvlibs"
-CMAKE_ARGS -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/nvidia-texture-tools/vs-build/x64-${CMAKE_BUILD_TYPE}/libs" 
--DCMAKE_LIBRARY_OUTPUT_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/nvidia-texture-tools/vs-build/x64-${CMAKE_BUILD_TYPE}/libs" 
--DCMAKE_CXX_STANDARD=17
-)
+#ExternalProject_Add(nvtools
+#SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/nvidia-texture-tools"
+#CMAKE_ARGS -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/nvidia-texture-tools/vs-build/x64-${CMAKE_BUILD_TYPE}/libs" 
+#-DCMAKE_LIBRARY_OUTPUT_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/nvidia-texture-tools/vs-build/x64-${CMAKE_BUILD_TYPE}/libs" 
+#-DCMAKE_CXX_STANDARD=17
+#)
 
 add_library(nvtt INTERFACE)
 target_include_directories(nvtt INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/nvidia-texture-tools/src/nvtt")
