@@ -23,16 +23,18 @@ add_subdirectory(gltf)
 
 ExternalProject_Add(nvtools
 SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/nvidia-texture-tools"
-BINARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/nvlibs"
-CMAKE_ARGS -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=${PROJECT_SOURCE_DIR}/libs -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=${PROJECT_SOURCE_DIR}/libs -DCMAKE_CXX_STANDARD=17
+#BINARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/nvlibs"
+CMAKE_ARGS -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/nvidia-texture-tools/vs-build/x64-${CMAKE_BUILD_TYPE}/libs" 
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/nvidia-texture-tools/vs-build/x64-${CMAKE_BUILD_TYPE}/libs" 
+-DCMAKE_CXX_STANDARD=17
 )
 
 add_library(nvtt INTERFACE)
 target_include_directories(nvtt INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/nvidia-texture-tools/src/nvtt")
 
-#set(nvttfolder "${PROJECT_SOURCE_DIR}/libs/Release")
+#set(nvttfolder "${PROJECT_SOURCE_DIR}/thirdparty/Release")
 
-set(nvttfolder "${PROJECT_SOURCE_DIR}/libs/") #$<IF:$<CONFIG:Debug>,Debug,Release>
+set(nvttfolder "${CMAKE_CURRENT_SOURCE_DIR}/nvidia-texture-tools/vs-build/x64-${CMAKE_BUILD_TYPE}/libs") #$<IF:$<CONFIG:Debug>,Debug,Release>
 message(STATUS "nvttfolder: ${nvttfolder}")
 target_link_libraries(nvtt INTERFACE "${nvttfolder}/nvtt.lib")
 target_link_libraries(nvtt INTERFACE "${nvttfolder}/bc6h.lib")
