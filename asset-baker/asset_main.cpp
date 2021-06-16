@@ -1253,21 +1253,13 @@ int main(int argc, char* argv[])
 				}
 			}
 		}
-
-		//else 
-		{
-			std::cout << "Invalid path: " << argv[1];
-			return -1;
-		}
+// 		else 
+// 		{
+// 			std::cout << "Invalid path: " << argv[1];
+// 			return -1;
+// 		}
 	}
-	//VulkanEngine engine;
-	//
-	//engine.init();
-	//
-	//engine.run();
-	//
-	//engine.cleanup();
-	//
+
 	return 0;
 }
 

@@ -3,7 +3,7 @@
 #include <fstream>
 #include <vector>
 #include <algorithm>
-
+#include <filesystem>
 #include <spirv_reflect.h>
 #include <assert.h>
 
@@ -408,6 +408,7 @@ void ShaderDescriptorBinder::set_shader(ShaderEffect* newShader)
 
 ShaderModule* ShaderCache::get_shader(const std::string& path)
 {
+	auto curpath = std::filesystem::current_path();
 	auto it = module_cache.find(path);
 	if (it == module_cache.end())
 	{	

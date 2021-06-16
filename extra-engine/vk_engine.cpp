@@ -1963,14 +1963,14 @@ bool VulkanEngine::load_prefab(const char* path, glm::mat4 root)
 
 std::string VulkanEngine::asset_path(std::string_view path)
 {
-	return "../../assets_export/" + std::string(path);
+	return "../../../assets_export/" + std::string(path);
 }
 
 
 
 std::string VulkanEngine::shader_path(std::string_view path)
 {
-	return "../../shaders/" + std::string(path);
+	return "../shaders/" + std::string(path);
 }
 
 void VulkanEngine::refresh_renderbounds(MeshObject* object)

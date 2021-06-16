@@ -9,7 +9,7 @@ file(GLOB ENGINE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp" "${CMAKE_CURRENT_SOUR
 add_executable (extra ${ENGINE_FILES})
 
 
-set_property(TARGET extra PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:extra>")
+#set_property(TARGET extra PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:extra>")
 
 target_include_directories(extra PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 
