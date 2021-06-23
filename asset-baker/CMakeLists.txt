@@ -4,6 +4,7 @@ enable_language(CUDA)
 find_package(CUDAToolkit REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
+
 set(DEVICE_LIBS ${DEVICE_LIBS} cudadevrt CUDA::cudart CUDA::cublas)
 
 find_package(assimp REQUIRED)

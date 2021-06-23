@@ -10,11 +10,10 @@ SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${NV_CMAKE_DIR}")
 
 INCLUDE(${NV_CMAKE_DIR}/OptimalOptions.cmake)
 
-IF(CMAKE_BUILD_TYPE MATCHES "debug")
-    SET(CMAKE_DEBUG_POSTFIX "_d" CACHE STRING "Postfix for debug build libraries.")
-    ADD_DEFINITIONS(-D_DEBUG=1)
-ENDIF()
-
+#IF(CMAKE_BUILD_TYPE MATCHES "Debug")
+#    SET(CMAKE_DEBUG_POSTFIX "_d" CACHE STRING "Postfix for debug build libraries.")
+#    ADD_DEFINITIONS(-D_DEBUG=1)
+#ENDIF()
 
 ADD_SUBDIRECTORY(extern)
 
