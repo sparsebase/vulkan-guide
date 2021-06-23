@@ -15,8 +15,8 @@ layout(set = 0, binding = 0) uniform  CameraBuffer{
 
 struct ObjectData{
 	mat4 model;
-vec4 spherebounds;
-vec4 extents;
+	vec4 spherebounds;
+	vec4 extents;
 }; 
 
 //all object matrices
