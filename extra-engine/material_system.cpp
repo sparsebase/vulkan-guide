@@ -1,4 +1,4 @@
-﻿#include "material_system.h"
+#include "material_system.h"
 #include <vk_initializers.h>
 #include <vk_shaders.h>
 #include "logger.h"

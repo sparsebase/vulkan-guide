@@ -1,4 +1,4 @@
-﻿// cvars.h : console variable system
+// cvars.h : console variable system
 
 #pragma once
 

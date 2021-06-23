@@ -1,4 +1,4 @@
-﻿#include <vk_scene.h>
+#include <vk_scene.h>
 #include <vk_engine.h>
 #include "Tracy.hpp"
 #include "logger.h"

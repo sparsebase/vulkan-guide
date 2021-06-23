@@ -1,4 +1,4 @@
-﻿#include "cvars.h"
+#include "cvars.h"
 
 
 #include <unordered_map>

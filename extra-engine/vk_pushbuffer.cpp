@@ -1,4 +1,4 @@
-﻿#include <vk_pushbuffer.h>
+#include <vk_pushbuffer.h>
 
 uint32_t vkutil::PushBuffer::push(void* data, size_t size)
 {

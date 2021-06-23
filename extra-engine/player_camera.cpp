@@ -1,4 +1,4 @@
-﻿#include <player_camera.h>
+#include <player_camera.h>
 #include "SDL.h"
 
 #include <glm/gtx/transform.hpp>

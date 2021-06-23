@@ -1,4 +1,4 @@
-﻿#include <vk_textures.h>
+#include <vk_textures.h>
 #include <iostream>
 
 #include <vk_initializers.h>

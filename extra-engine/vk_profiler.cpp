@@ -1,4 +1,4 @@
-﻿#include <vk_profiler.h>
+#include <vk_profiler.h>
 #include <algorithm>
 
 namespace vkutil {

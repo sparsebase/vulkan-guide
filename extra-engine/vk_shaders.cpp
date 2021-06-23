@@ -1,4 +1,4 @@
-﻿#include <vk_shaders.h>
+#include <vk_shaders.h>
 #include <vk_initializers.h>
 #include <fstream>
 #include <vector>

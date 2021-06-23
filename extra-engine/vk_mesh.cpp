@@ -1,4 +1,4 @@
-﻿#include <vk_mesh.h>
+#include <vk_mesh.h>
 #include <iostream>
 #include <asset_loader.h>
 #include <mesh_asset.h>

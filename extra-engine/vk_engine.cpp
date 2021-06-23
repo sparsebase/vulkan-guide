@@ -1,4 +1,4 @@
-﻿
+
 #include "vk_engine.h"
 
 #include <SDL.h>
@@ -124,9 +124,9 @@ void VulkanEngine::init()
 	LOG_INFO("Engine Initialized, starting Load");
 	
 
-	load_images();
-
 	load_meshes();
+
+	load_images();
 
 	init_scene();
 
@@ -1595,40 +1595,44 @@ void VulkanEngine::init_scene()
 
 
 	
+	glm::mat4 translation = glm::translate(glm::mat4{ 1.0 }, glm::vec3(0, 0, 0));
+	glm::mat4 scale = glm::scale(glm::mat4{ 1.0 }, glm::vec3(10));
+
+	load_prefab(asset_path("FlightHelmet/FlightHelmet.pfb").c_str(), (translation * scale));
 
 
-	int dimHelmets =1;
-	for (int x = -dimHelmets; x <= dimHelmets; x++) {
-		for (int y = -dimHelmets; y <= dimHelmets; y++) {
-	
-			glm::mat4 translation = glm::translate(glm::mat4{ 1.0 }, glm::vec3(x * 5, 10, y * 5));
-			glm::mat4 scale = glm::scale(glm::mat4{ 1.0 }, glm::vec3(10));
-	
-			load_prefab(asset_path("FlightHelmet/FlightHelmet.pfb").c_str(),(translation * scale));
-		}
-	}
+// 	int dimHelmets =1;
+// 	for (int x = -dimHelmets; x <= dimHelmets; x++) {
+// 		for (int y = -dimHelmets; y <= dimHelmets; y++) {
+// 	
+// 			glm::mat4 translation = glm::translate(glm::mat4{ 1.0 }, glm::vec3(x * 5, 10, y * 5));
+// 			glm::mat4 scale = glm::scale(glm::mat4{ 1.0 }, glm::vec3(10));
+// 	
+// 			load_prefab(asset_path("FlightHelmet/FlightHelmet.pfb").c_str(),(translation * scale));
+// 		}
+// 	}
 
 	glm::mat4 sponzaMatrix = glm::scale(glm::mat4{ 1.0 }, glm::vec3(1));;
 	
 	glm::mat4 unrealFixRotation = glm::rotate(glm::radians(-90.f), glm::vec3{ 1,0,0 });
 	
-	load_prefab(asset_path("Sponza2.pfb").c_str(), sponzaMatrix);
-	load_prefab(asset_path("scifi/TopDownScifi.pfb").c_str(),  glm::translate(glm::vec3{0,20,0}));
-	int dimcities = 2;
-	for (int x = -dimcities; x <= dimcities; x++) {
-		for (int y = -dimcities; y <= dimcities; y++) {
-	
-			glm::mat4 translation = glm::translate(glm::mat4{ 1.0 }, glm::vec3(x * 300, y, y * 300));
-			glm::mat4 scale = glm::scale(glm::mat4{ 1.0 }, glm::vec3(10));
-	
-			
-			glm::mat4 cityMatrix = translation;// * glm::scale(glm::mat4{ 1.0f }, glm::vec3(.01f));
-			//load_prefab(asset_path("scifi/TopDownScifi.pfb").c_str(), unrealFixRotation * glm::scale(glm::mat4{ 1.0 }, glm::vec3(.01)));
-			//load_prefab(asset_path("PolyCity/PolyCity.pfb").c_str(), cityMatrix);
-			load_prefab(asset_path("CITY/polycity.pfb").c_str(), cityMatrix);
-		//	load_prefab(asset_path("scifi/TopDownScifi.pfb").c_str(), cityMatrix);
-		}
-	}
+	load_prefab(asset_path("Sponza/Sponza.pfb").c_str(), sponzaMatrix);
+// 	load_prefab(asset_path("scifi/TopDownScifi.pfb").c_str(),  glm::translate(glm::vec3{0,20,0}));
+// 	int dimcities = 2;
+// 	for (int x = -dimcities; x <= dimcities; x++) {
+// 		for (int y = -dimcities; y <= dimcities; y++) {
+// 	
+// 			glm::mat4 translation = glm::translate(glm::mat4{ 1.0 }, glm::vec3(x * 300, y, y * 300));
+// 			glm::mat4 scale = glm::scale(glm::mat4{ 1.0 }, glm::vec3(10));
+// 	
+// 			
+// 			glm::mat4 cityMatrix = translation;// * glm::scale(glm::mat4{ 1.0f }, glm::vec3(.01f));
+// 			//load_prefab(asset_path("scifi/TopDownScifi.pfb").c_str(), unrealFixRotation * glm::scale(glm::mat4{ 1.0 }, glm::vec3(.01)));
+// 			//load_prefab(asset_path("PolyCity/PolyCity.pfb").c_str(), cityMatrix);
+// 			load_prefab(asset_path("CITY/polycity.pfb").c_str(), cityMatrix);
+// 		//	load_prefab(asset_path("scifi/TopDownScifi.pfb").c_str(), cityMatrix);
+// 		}
+// 	}
 	
 
 	//for (int x = -20; x <= 20; x++) {
