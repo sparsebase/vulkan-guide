@@ -19,6 +19,8 @@ struct PlayerCamera {
 
 	bool bSprint = false;
 	bool bLocked;
+	bool leftMouseDown = false;
+	bool midMouseDown = false;
 
 	void process_input_event(SDL_Event* ev);
 	void update_camera(float deltaSeconds);

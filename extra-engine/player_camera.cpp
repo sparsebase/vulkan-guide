@@ -68,11 +68,46 @@ void PlayerCamera::process_input_event(SDL_Event* ev)
 			break;
 		}
 	}
+	else if (ev->type == SDL_MOUSEBUTTONDOWN)
+	{
+		if (ev->button.button == SDL_BUTTON_LEFT)
+			leftMouseDown = true;
+		else if (ev->button.button == SDL_BUTTON_MIDDLE)
+			midMouseDown = true;
+	}
+	else if (ev->type == SDL_MOUSEBUTTONUP)
+	{
+		if (ev->button.button == SDL_BUTTON_LEFT)
+			leftMouseDown = false;
+		else if (ev->button.button == SDL_BUTTON_MIDDLE)
+			midMouseDown = false;
+
+	}
+	else if (ev->type == SDL_MOUSEWHEEL)
+	{
+		glm::vec3 forward = { 0, 0, ev->wheel.y * 5};
+		glm::mat4 cam_rot = get_rotation_matrix();
+		forward = cam_rot * glm::vec4(forward, 0.f);
+		position += forward;
+	}
 	else if (ev->type == SDL_MOUSEMOTION) {
-		if (!bLocked)
+		if (leftMouseDown)
 		{
 			pitch -= ev->motion.yrel * 0.003f;
 			yaw -= ev->motion.xrel * 0.003f;
+		}
+		else if (midMouseDown)
+		{
+			
+			glm::vec3 right = { -ev->motion.xrel,0,0 };
+			glm::vec3 up = { 0,ev->motion.yrel,0 };
+
+			glm::mat4 cam_rot = get_rotation_matrix();
+
+			right = cam_rot * glm::vec4(right, 0.f);
+			up = cam_rot * glm::vec4(up, 0.f);
+
+			position -= right + up;
 		}
 	}
 

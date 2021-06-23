@@ -8,7 +8,7 @@ set(DEVICE_LIBS ${DEVICE_LIBS} cudadevrt CUDA::cudart CUDA::cublas)
 
 find_package(assimp REQUIRED)
 # Add source to this project's executable.
-add_executable (baker "asset_main.cpp")
+add_executable (baker "../assets/asset_main.cpp")
 
 #set_property(TARGET baker PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:extra>")
 set_target_properties(baker PROPERTIES LINK_DIRECTORIES ${CUDAToolkit_LIBRARY_DIR}) 

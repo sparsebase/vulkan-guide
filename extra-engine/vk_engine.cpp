@@ -573,42 +573,42 @@ void VulkanEngine::run()
 		SDL_Event e;
 		{
 			ZoneScopedNC("Event Loop", tracy::Color::White);
-		while (SDL_PollEvent(&e) != 0)
-		{
-
-			ImGui_ImplSDL2_ProcessEvent(&e);
-			_camera.process_input_event(&e);
-
-
-			//close the window when user alt-f4s or clicks the X button			
-			if (e.type == SDL_QUIT)
+			while (SDL_PollEvent(&e) != 0)
 			{
-				bQuit = true;
-			}
-			else if (e.type == SDL_KEYDOWN)
-			{
-				if (e.key.keysym.sym == SDLK_SPACE)
+
+				ImGui_ImplSDL2_ProcessEvent(&e);
+				_camera.process_input_event(&e);
+
+
+				//close the window when user alt-f4s or clicks the X button			
+				if (e.type == SDL_QUIT)
 				{
-					_selectedShader += 1;
-					if (_selectedShader > 1)
+					bQuit = true;
+				}
+				else if (e.type == SDL_KEYDOWN)
+				{
+					if (e.key.keysym.sym == SDLK_SPACE)
 					{
-						_selectedShader = 0;
+						_selectedShader += 1;
+						if (_selectedShader > 1)
+						{
+							_selectedShader = 0;
+						}
+					}
+					if (e.key.keysym.sym == SDLK_TAB)
+					{
+						if (CVAR_CamLock.Get())
+						{
+							LOG_INFO("Mouselook disabled");
+							CVAR_CamLock.Set(false);
+						}
+						else {
+							LOG_INFO("Mouselook enabled");
+							CVAR_CamLock.Set(true);
+						}
 					}
 				}
-				if (e.key.keysym.sym == SDLK_TAB)
-				{
-					if (CVAR_CamLock.Get())
-					{
-						LOG_INFO("Mouselook disabled");
-						CVAR_CamLock.Set(false);
-					}
-					else {
-						LOG_INFO("Mouselook enabled");
-						CVAR_CamLock.Set(true);
-					}
-				}
 			}
-		}
 		}
 		{
 			ZoneScopedNC("Imgui Logic", tracy::Color::Grey);
@@ -662,7 +662,7 @@ void VulkanEngine::run()
 			{
 				ImGui::Text("STAT %s %d", k.c_str(), v);
 			}
-
+			ImGui::Text("Camera pos: [%.2f, %.2f, %.2f]", _camera.position.x, _camera.position.y, _camera.position.z);
 
 			ImGui::End();
 		}
@@ -684,7 +684,8 @@ void VulkanEngine::run()
 
 			_camera.update_camera(stats.frametime);
 
-			_mainLight.lightPosition = _camera.position;
+			//_mainLight.lightPosition = _camera.position;
+			_mainLight.lightPosition = glm::vec3(0, 1624, 0);
 		}
 	
 		draw();
@@ -1595,10 +1596,16 @@ void VulkanEngine::init_scene()
 
 
 	
-	glm::mat4 translation = glm::translate(glm::mat4{ 1.0 }, glm::vec3(0, 0, 0));
-	glm::mat4 scale = glm::scale(glm::mat4{ 1.0 }, glm::vec3(10));
+	glm::mat4 translation = glm::translate(glm::mat4{ 1.0 }, glm::vec3(1000, 0, 0));
+	glm::mat4 scale = glm::scale(glm::mat4{ 1.0 }, glm::vec3(300));
 
 	load_prefab(asset_path("FlightHelmet/FlightHelmet.pfb").c_str(), (translation * scale));
+
+	translation = glm::translate(glm::mat4{ 1.0 }, glm::vec3(500, 100, 0));
+	scale = glm::scale(glm::mat4{ 1.0 }, glm::vec3(100));
+
+	load_prefab(asset_path("DamagedHelmet/DamagedHelmet.pfb").c_str(), (translation * scale));
+
 
 
 // 	int dimHelmets =1;
