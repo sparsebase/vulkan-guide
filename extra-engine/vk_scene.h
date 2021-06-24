@@ -77,6 +77,7 @@ public:
 			return materialSet == other.materialSet && shaderPass == other.shaderPass;
 		}
 	};
+
 	struct PassObject {
 		PassMaterial material;
 		Handle<DrawMesh> meshID;
@@ -84,6 +85,7 @@ public:
 		int32_t builtbatch;
 		uint32_t customKey;
 	};
+
 	struct RenderBatch {
 		Handle<PassObject> object;
 		uint64_t sortKey;
@@ -104,6 +106,7 @@ public:
 		uint32_t first;
 		uint32_t count;
 	};
+
 	struct MeshPass {
 
 		std::vector<RenderScene::Multibatch> multibatches_;

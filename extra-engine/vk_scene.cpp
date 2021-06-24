@@ -439,7 +439,7 @@ void RenderScene::refresh_pass(MeshPass* pass)
 		newbatch.first = 0;
 		 
 #if 1
-		for (int i = 1; i < pass->batches_.size(); i++)
+		for (int i = 0; i < pass->batches_.size(); i++)
 		{
 			IndirectBatch* joinbatch = &pass->batches_[newbatch.first];
 			IndirectBatch* batch = &pass->batches_[i];
