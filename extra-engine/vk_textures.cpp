@@ -31,11 +31,11 @@ bool vkutil::load_image_from_file(VulkanEngine& engine, const char* file, Alloca
 	AllocatedBufferUntyped stagingBuffer = engine.create_buffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY);
 
 	void* data;
-	vmaMapMemory(engine._allocator, stagingBuffer._allocation, &data);
+	vmaMapMemory(engine.allocator_, stagingBuffer.allocation_, &data);
 
 	memcpy(data, pixel_ptr, static_cast<size_t>(imageSize));
 
-	vmaUnmapMemory(engine._allocator, stagingBuffer._allocation);
+	vmaUnmapMemory(engine.allocator_, stagingBuffer.allocation_);
 
 	stbi_image_free(pixels);
 
@@ -43,7 +43,7 @@ bool vkutil::load_image_from_file(VulkanEngine& engine, const char* file, Alloca
 	outImage =  upload_image(texWidth, texHeight, image_format, engine, stagingBuffer);
 
 
-	vmaDestroyBuffer(engine._allocator, stagingBuffer._buffer, stagingBuffer._allocation);
+	vmaDestroyBuffer(engine.allocator_, stagingBuffer.buffer_, stagingBuffer.allocation_);
 
 	std::cout << "Texture loaded succesfully " << file << std::endl;
 
@@ -80,7 +80,7 @@ bool vkutil::load_image_from_asset(VulkanEngine& engine, const char* filename, A
 	std::vector<MipmapInfo> mips;
 
 	void* data;
-	vmaMapMemory(engine._allocator, stagingBuffer._allocation, &data);
+	vmaMapMemory(engine.allocator_, stagingBuffer.allocation_, &data);
 	size_t offset = 0;
 	{
 		
@@ -95,11 +95,11 @@ bool vkutil::load_image_from_asset(VulkanEngine& engine, const char* filename, A
 			offset += mip.dataSize;
 		}
 	}
-	vmaUnmapMemory(engine._allocator, stagingBuffer._allocation);		
+	vmaUnmapMemory(engine.allocator_, stagingBuffer.allocation_);		
 
 	outImage = upload_image_mipmapped(textureInfo.pages[0].width, textureInfo.pages[0].height, image_format, engine, stagingBuffer,mips);
 
-	vmaDestroyBuffer(engine._allocator, stagingBuffer._buffer, stagingBuffer._allocation);
+	vmaDestroyBuffer(engine.allocator_, stagingBuffer.buffer_, stagingBuffer.allocation_);
 
 	return true;
 }
@@ -119,7 +119,7 @@ AllocatedImage vkutil::upload_image(int texWidth, int texHeight, VkFormat image_
 	dimg_allocinfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
 	//allocate and create the image
-	vmaCreateImage(engine._allocator, &dimg_info, &dimg_allocinfo, &newImage._image, &newImage._allocation, nullptr);
+	vmaCreateImage(engine.allocator_, &dimg_info, &dimg_allocinfo, &newImage.image_, &newImage.allocation_, nullptr);
 
 	//transition image to transfer-receiver	
 	engine.immediate_submit([&](VkCommandBuffer cmd) {
@@ -135,7 +135,7 @@ AllocatedImage vkutil::upload_image(int texWidth, int texHeight, VkFormat image_
 
 		imageBarrier_toTransfer.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 		imageBarrier_toTransfer.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-		imageBarrier_toTransfer.image = newImage._image;
+		imageBarrier_toTransfer.image = newImage.image_;
 		imageBarrier_toTransfer.subresourceRange = range;
 
 		imageBarrier_toTransfer.srcAccessMask = 0;
@@ -156,7 +156,7 @@ AllocatedImage vkutil::upload_image(int texWidth, int texHeight, VkFormat image_
 		copyRegion.imageExtent = imageExtent;
 
 		//copy the buffer into the image
-		vkCmdCopyBufferToImage(cmd, stagingBuffer._buffer, newImage._image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);
+		vkCmdCopyBufferToImage(cmd, stagingBuffer.buffer_, newImage.image_, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);
 
 		VkImageMemoryBarrier imageBarrier_toReadable = imageBarrier_toTransfer;
 
@@ -172,19 +172,19 @@ AllocatedImage vkutil::upload_image(int texWidth, int texHeight, VkFormat image_
 
 
 	//build a default imageview
-	VkImageViewCreateInfo view_info = vkinit::imageview_create_info(image_format, newImage._image, VK_IMAGE_ASPECT_COLOR_BIT);
+	VkImageViewCreateInfo view_info = vkinit::imageview_create_info(image_format, newImage.image_, VK_IMAGE_ASPECT_COLOR_BIT);
 
-	vkCreateImageView(engine._device, &view_info, nullptr, &newImage._defaultView);
+	vkCreateImageView(engine.device_, &view_info, nullptr, &newImage.defaultView_);
 
 
-	engine._mainDeletionQueue.push_function([=, &engine]() {
+	engine.mainDeletionQueue_.push_function([=, &engine]() {
 
-		vmaDestroyImage(engine._allocator, newImage._image, newImage._allocation);
+		vmaDestroyImage(engine.allocator_, newImage.image_, newImage.allocation_);
 	});
 
 	
 
-	newImage.mipLevels = 1;// mips.size();
+	newImage.mipLevels_ = 1;// mips.size();
 	return newImage;
 }
 
@@ -205,7 +205,7 @@ AllocatedImage vkutil::upload_image_mipmapped(int texWidth, int texHeight, VkFor
 	dimg_allocinfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
 	//allocate and create the image
-	vmaCreateImage(engine._allocator, &dimg_info, &dimg_allocinfo, &newImage._image, &newImage._allocation, nullptr);
+	vmaCreateImage(engine.allocator_, &dimg_info, &dimg_allocinfo, &newImage.image_, &newImage.allocation_, nullptr);
 
 	//transition image to transfer-receiver	
 	engine.immediate_submit([&](VkCommandBuffer cmd) {
@@ -221,7 +221,7 @@ AllocatedImage vkutil::upload_image_mipmapped(int texWidth, int texHeight, VkFor
 
 		imageBarrier_toTransfer.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 		imageBarrier_toTransfer.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-		imageBarrier_toTransfer.image = newImage._image;
+		imageBarrier_toTransfer.image = newImage.image_;
 		imageBarrier_toTransfer.subresourceRange = range;
 
 		imageBarrier_toTransfer.srcAccessMask = 0;
@@ -246,7 +246,7 @@ AllocatedImage vkutil::upload_image_mipmapped(int texWidth, int texHeight, VkFor
 			copyRegion.imageExtent = imageExtent;
 
 			//copy the buffer into the image
-			vkCmdCopyBufferToImage(cmd, stagingBuffer._buffer, newImage._image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);
+			vkCmdCopyBufferToImage(cmd, stagingBuffer.buffer_, newImage.image_, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);
 
 			imageExtent.width /= 2;
 			imageExtent.height /= 2;
@@ -265,17 +265,17 @@ AllocatedImage vkutil::upload_image_mipmapped(int texWidth, int texHeight, VkFor
 
 
 
-	newImage.mipLevels = (uint32_t) mips.size();
+	newImage.mipLevels_ = (uint32_t) mips.size();
 
 
 	//build a default imageview
-	VkImageViewCreateInfo view_info = vkinit::imageview_create_info(image_format, newImage._image, VK_IMAGE_ASPECT_COLOR_BIT);
-	view_info.subresourceRange.levelCount = newImage.mipLevels;
-	vkCreateImageView(engine._device, &view_info, nullptr, &newImage._defaultView);
+	VkImageViewCreateInfo view_info = vkinit::imageview_create_info(image_format, newImage.image_, VK_IMAGE_ASPECT_COLOR_BIT);
+	view_info.subresourceRange.levelCount = newImage.mipLevels_;
+	vkCreateImageView(engine.device_, &view_info, nullptr, &newImage.defaultView_);
 
-	engine._mainDeletionQueue.push_function([=, &engine]() {
+	engine.mainDeletionQueue_.push_function([=, &engine]() {
 
-		vmaDestroyImage(engine._allocator, newImage._image, newImage._allocation);
+		vmaDestroyImage(engine.allocator_, newImage.image_, newImage.allocation_);
 	});
 
 	return newImage;

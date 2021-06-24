@@ -92,29 +92,29 @@ struct MeshObject {
 
 
 struct FrameData {
-	VkSemaphore _presentSemaphore, _renderSemaphore;
-	VkFence _renderFence;
+	VkSemaphore presentSemaphore_, renderSemaphore_;
+	VkFence renderFence_;
 
-	DeletionQueue _frameDeletionQueue;
+	DeletionQueue frameDeletionQueue_;
 
-	VkCommandPool _commandPool;
-	VkCommandBuffer _mainCommandBuffer;
+	VkCommandPool commandPool_;
+	VkCommandBuffer mainCommandBuffer_;
 	
-	vkutil::PushBuffer dynamicData;
+	vkutil::PushBuffer dynamicData_;
 	//AllocatedBufferUntyped dynamicDataBuffer;
 
-	AllocatedBufferUntyped debugOutputBuffer;
+	AllocatedBufferUntyped debugOutputBuffer_;
 
-	vkutil::DescriptorAllocator* dynamicDescriptorAllocator;
+	vkutil::DescriptorAllocator* dynamicDescriptorAllocator_;
 
-	std::vector<uint32_t> debugDataOffsets;
-	std::vector<std::string> debugDataNames;
+	std::vector<uint32_t> debugDataOffsets_;
+	std::vector<std::string> debugDataNames_;
 };
 
 
 struct UploadContext {
-	VkFence _uploadFence;
-	VkCommandPool _commandPool;	
+	VkFence uploadFence_;
+	VkCommandPool commandPool_;	
 };
 
 struct GPUCameraData{
@@ -217,100 +217,100 @@ const int MAX_OBJECTS = 150000;
 class VulkanEngine {
 public:
 
-	bool _isInitialized{ false };
-	int _frameNumber {0};
-	int _selectedShader{ 0 };
+	bool isInitialized_{ false };
+	int frameNumber_ {0};
+	int selectedShader_{ 0 };
 
-	VkExtent2D _windowExtent{ 1700 , 900 };
+	VkExtent2D windowExtent_{ 1700 , 900 };
 
-	struct SDL_Window* _window{ nullptr };
+	struct SDL_Window* window_{ nullptr };
 
-	VkInstance _instance;
-	VkPhysicalDevice _chosenGPU;
-	VkDevice _device;
+	VkInstance instance_;
+	VkPhysicalDevice physicalDevice_;
+	VkDevice device_;
 
-	VkPhysicalDeviceProperties _gpuProperties;
+	VkPhysicalDeviceProperties gpuProperties_;
 
-	FrameData _frames[FRAME_OVERLAP];
+	FrameData frames_[FRAME_OVERLAP];
 	
-	VkQueue _graphicsQueue;
-	uint32_t _graphicsQueueFamily;
+	VkQueue graphicsQueue_;
+	uint32_t graphicsQueueFamily_;
 	
-	tracy::VkCtx* _graphicsQueueContext;
+	tracy::VkCtx* graphicsQueueContext_;
 
-	VkRenderPass _renderPass;
-	VkRenderPass _shadowPass;
-	VkRenderPass _copyPass;
+	VkRenderPass renderPass_;
+	VkRenderPass shadowPass_;
+	VkRenderPass copyPass_;
 
-	VkSurfaceKHR _surface;
-	VkSwapchainKHR _swapchain;
-	VkFormat _swachainImageFormat;
+	VkSurfaceKHR surface_;
+	VkSwapchainKHR swapchain_;
+	VkFormat swachainImageFormat_;
 
-	VkFormat _renderFormat;
-	AllocatedImage _rawRenderImage;
-	VkSampler _smoothSampler;
-	VkFramebuffer _forwardFramebuffer;
-	VkFramebuffer _shadowFramebuffer;
-	std::vector<VkFramebuffer> _framebuffers;
-	std::vector<VkImage> _swapchainImages;
-	std::vector<VkImageView> _swapchainImageViews;	
+	VkFormat renderFormat_;
+	AllocatedImage rawRenderImage_;
+	VkSampler smoothSampler_;
+	VkFramebuffer forwardFramebuffer_;
+	VkFramebuffer shadowFramebuffer_;
+	std::vector<VkFramebuffer> framebuffers_;
+	std::vector<VkImage> swapchainImages_;
+	std::vector<VkImageView> swapchainImageViews_;	
 
-    DeletionQueue _mainDeletionQueue;
+    DeletionQueue mainDeletionQueue_;
 	
-	VmaAllocator _allocator; //vma lib allocator
+	VmaAllocator allocator_; //vma lib allocator
 
 	//depth resources
 	
-	AllocatedImage _depthImage;
-	AllocatedImage _depthPyramid;
-	VkSampler _shadowSampler;
-	AllocatedImage _shadowImage;
+	AllocatedImage depthImage_;
+	AllocatedImage depthPyramid_;
+	VkSampler shadowSampler_;
+	AllocatedImage shadowImage_;
 	//VkExtent2D _shadowExtent{1024,1024};
-	VkExtent2D _shadowExtent{ 1024*4,1024*4 };
-	int depthPyramidWidth ;
-	int depthPyramidHeight;
-	int depthPyramidLevels;
+	VkExtent2D shadowExtent_{ 1024*4,1024*4 };
+	int depthPyramidWidth_ ;
+	int depthPyramidHeight_;
+	int depthPyramidLevels_;
 	
 	//the format for the depth image
-	VkFormat _depthFormat;
+	VkFormat depthFormat_;
 	
-	vkutil::DescriptorAllocator* _descriptorAllocator;
-	vkutil::DescriptorLayoutCache* _descriptorLayoutCache;
-	vkutil::VulkanProfiler* _profiler;
-	vkutil::MaterialSystem* _materialSystem;
+	vkutil::DescriptorAllocator* descriptorAllocator_;
+	vkutil::DescriptorLayoutCache* descriptorLayoutCache_;
+	vkutil::VulkanProfiler* profiler_;
+	vkutil::MaterialSystem* materialSystem_;
 
-	VkDescriptorSetLayout _singleTextureSetLayout;
+	VkDescriptorSetLayout singleTextureSetLayout_;
 
-	GPUSceneData _sceneParameters;
+	GPUSceneData sceneParameters_;
 
-	std::vector<VkBufferMemoryBarrier> uploadBarriers;
+	std::vector<VkBufferMemoryBarrier> uploadBarriers_;
 
-	std::vector<VkBufferMemoryBarrier> cullReadyBarriers;
+	std::vector<VkBufferMemoryBarrier> cullReadyBarriers_;
 
-	std::vector<VkBufferMemoryBarrier> postCullBarriers;
+	std::vector<VkBufferMemoryBarrier> postCullBarriers_;
 
-	UploadContext _uploadContext;
+	UploadContext uploadContext_;
 
-	PlayerCamera _camera;
-	DirectionalLight _mainLight;
+	PlayerCamera camera_;
+	DirectionalLight mainLight_;
 
-	VkPipeline _cullPipeline;
-	VkPipelineLayout _cullLayout;
+	VkPipeline cullPipeline_;
+	VkPipelineLayout cullLayout_;
 
-	VkPipeline _depthReducePipeline;
-	VkPipelineLayout _depthReduceLayout;
+	VkPipeline depthReducePipeline_;
+	VkPipelineLayout depthReduceLayout_;
 
-	VkPipeline _sparseUploadPipeline;
-	VkPipelineLayout _sparseUploadLayout;
+	VkPipeline sparseUploadPipeline_;
+	VkPipelineLayout sparseUploadLayout_;
 
-	VkPipeline _blitPipeline;
-	VkPipelineLayout _blitLayout;
+	VkPipeline blitPipeline_;
+	VkPipelineLayout blitLayout_;
 
-	VkSampler _depthSampler;
-	VkImageView depthPyramidMips[16] = {};
+	VkSampler depthSampler_;
+	VkImageView depthPyramidMips_[16] = {};
 
-	MeshDrawCommands currentCommands;
-	RenderScene _renderScene;
+	MeshDrawCommands currentCommands_;
+	RenderScene renderScene_;
 
 	//EngineConfig _config;
 
@@ -336,11 +336,11 @@ public:
 	FrameData& get_current_frame();
 	FrameData& get_last_frame();
 
-	ShaderCache _shaderCache;
+	ShaderCache shaderCache_;
 
-	std::unordered_map<std::string, Mesh> _meshes;
-	std::unordered_map<std::string, Texture> _loadedTextures;
-	std::unordered_map<std::string, assets::PrefabInfo*> _prefabCache;
+	std::unordered_map<std::string, Mesh> meshes_;
+	std::unordered_map<std::string, Texture> loadedTextures_;
+	std::unordered_map<std::string, assets::PrefabInfo*> prefabCache_;
 	//functions
 
 	//returns nullptr if it cant be found
@@ -424,6 +424,6 @@ template<typename T>
 T* VulkanEngine::map_buffer(AllocatedBuffer<T>& buffer)
 {
 	void* data;
-	vmaMapMemory(_allocator, buffer._allocation, &data);
+	vmaMapMemory(allocator_, buffer.allocation_, &data);
 	return(T*)data;
 }

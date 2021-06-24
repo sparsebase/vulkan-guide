@@ -141,14 +141,14 @@ ShaderEffect* build_effect(VulkanEngine* eng,std::string_view vertexShader, std:
 	//textured defaultlit shader
 	ShaderEffect* effect = new ShaderEffect();
 	
-	effect->add_stage(eng->_shaderCache.get_shader(VulkanEngine::shader_path(vertexShader)), VK_SHADER_STAGE_VERTEX_BIT);
+	effect->add_stage(eng->shaderCache_.get_shader(VulkanEngine::shader_path(vertexShader)), VK_SHADER_STAGE_VERTEX_BIT);
 	if (fragmentShader.size() > 2)
 	{
-		effect->add_stage(eng->_shaderCache.get_shader(VulkanEngine::shader_path(fragmentShader)), VK_SHADER_STAGE_FRAGMENT_BIT);
+		effect->add_stage(eng->shaderCache_.get_shader(VulkanEngine::shader_path(fragmentShader)), VK_SHADER_STAGE_FRAGMENT_BIT);
 	}
 	
 
-	effect->reflect_layout(eng->_device, overrides, 2);
+	effect->reflect_layout(eng->device_, overrides, 2);
 
 	return effect; 
 }
@@ -163,9 +163,9 @@ void vkutil::MaterialSystem::build_default_templates()
 	ShaderEffect* opaqueShadowcast = build_effect(engine, "tri_mesh_ssbo_instanced_shadowcast.vert.spv","");
 
 	//passes
-	ShaderPass* texturedLitPass = build_shader(engine->_renderPass,forwardBuilder, texturedLit);
-	ShaderPass* defaultLitPass = build_shader(engine->_renderPass, forwardBuilder, defaultLit);
-	ShaderPass* opaqueShadowcastPass = build_shader(engine->_shadowPass,shadowBuilder, opaqueShadowcast);
+	ShaderPass* texturedLitPass = build_shader(engine->renderPass_,forwardBuilder, texturedLit);
+	ShaderPass* defaultLitPass = build_shader(engine->renderPass_, forwardBuilder, defaultLit);
+	ShaderPass* opaqueShadowcastPass = build_shader(engine->shadowPass_,shadowBuilder, opaqueShadowcast);
 
 
 	{
@@ -195,7 +195,7 @@ void vkutil::MaterialSystem::build_default_templates()
 
 		transparentForward._rasterizer.cullMode = VK_CULL_MODE_NONE;
 		//passes
-		ShaderPass* transparentLitPass = build_shader(engine->_renderPass, transparentForward, texturedLit);
+		ShaderPass* transparentLitPass = build_shader(engine->renderPass_, transparentForward, texturedLit);
 
 		EffectTemplate defaultTextured;
 		defaultTextured.passShaders[MeshpassType::Transparency] = transparentLitPass;
@@ -232,7 +232,7 @@ vkutil::ShaderPass* vkutil::MaterialSystem::build_shader(VkRenderPass renderPass
 
 	pipbuilder.setShaders(effect);
 
-	pass->pipeline = pipbuilder.build_pipeline(engine->_device, renderPass);
+	pass->pipeline = pipbuilder.build_pipeline(engine->device_, renderPass);
 
 	return pass;
 }
@@ -260,7 +260,7 @@ vkutil::Material* vkutil::MaterialSystem::build_material(const std::string& mate
 
 
 	
-		auto& db = vkutil::DescriptorBuilder::begin(engine->_descriptorLayoutCache, engine->_descriptorAllocator);
+		auto& db = vkutil::DescriptorBuilder::begin(engine->descriptorLayoutCache_, engine->descriptorAllocator_);
 
 		for (int i = 0; i < info.textures.size(); i++)
 		{

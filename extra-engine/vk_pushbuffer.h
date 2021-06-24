@@ -18,10 +18,10 @@ namespace vkutil {
 		void reset();
 
 		uint32_t pad_uniform_buffer_size(uint32_t originalSize);
-		AllocatedBufferUntyped source;
-		uint32_t align;
-		uint32_t currentOffset;
-		void* mapped;
+		AllocatedBufferUntyped source_;
+		uint32_t align_;
+		uint32_t currentOffset_;
+		void* mapped_;
 	};
 
 	template<typename T>

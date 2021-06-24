@@ -5,9 +5,9 @@
 
 void RenderScene::init()
 {
-	_forwardPass.type = MeshpassType::Forward;
-	_shadowPass.type = MeshpassType::DirectionalShadow;
-	_transparentForwardPass.type = MeshpassType::Transparency;
+	forwardPass_.type_ = MeshpassType::Forward;
+	shadowPass_.type_ = MeshpassType::DirectionalShadow;
+	transparentForwardPass_.type_ = MeshpassType::Transparency;
 }
 
 Handle<RenderObject> RenderScene::register_object(MeshObject* object)
@@ -21,26 +21,26 @@ Handle<RenderObject> RenderScene::register_object(MeshObject* object)
 	newObj.customSortKey = object->customSortKey;
 	newObj.passIndices.clear(-1);
 	Handle<RenderObject> handle;
-	handle.handle = static_cast<uint32_t>(renderables.size());
+	handle.handle = static_cast<uint32_t>(renderables_.size());
 	
-	renderables.push_back(newObj);
+	renderables_.push_back(newObj);
 
 	if (object->bDrawForwardPass)
 	{
 		if (object->material->original->passShaders[MeshpassType::Transparency])
 		{
-			_transparentForwardPass.unbatchedObjects.push_back(handle);
+			transparentForwardPass_.unbatchedObjects_.push_back(handle);
 		}
 		if (object->material->original->passShaders[MeshpassType::Forward])
 		{
-			_forwardPass.unbatchedObjects.push_back(handle);
+			forwardPass_.unbatchedObjects_.push_back(handle);
 		}
 	}
 	if (object->bDrawShadowPass)
 	{
 		if (object->material->original->passShaders[MeshpassType::DirectionalShadow])
 		{
-			_shadowPass.unbatchedObjects.push_back(handle);
+			shadowPass_.unbatchedObjects_.push_back(handle);
 		}
 	}
 
@@ -50,7 +50,7 @@ Handle<RenderObject> RenderScene::register_object(MeshObject* object)
 
 void RenderScene::register_object_batch(MeshObject* first, uint32_t count)
 {
-	renderables.reserve(count);
+	renderables_.reserve(count);
 
 	for (uint32_t i = 0; i < count; i++) {
 		register_object(&(first[i]));
@@ -72,8 +72,8 @@ void RenderScene::update_object(Handle<RenderObject> objectID)
 		Handle<PassObject> obj;
 		obj.handle = passIndices[MeshpassType::Forward];
 
-		_forwardPass.objectsToDelete.push_back(obj);
-		_forwardPass.unbatchedObjects.push_back(objectID);
+		forwardPass_.objectsToDelete_.push_back(obj);
+		forwardPass_.unbatchedObjects_.push_back(objectID);
 
 		passIndices[MeshpassType::Forward] = -1;
 	}
@@ -84,8 +84,8 @@ void RenderScene::update_object(Handle<RenderObject> objectID)
 		Handle<PassObject> obj;
 		obj.handle = passIndices[MeshpassType::DirectionalShadow];
 
-		_shadowPass.objectsToDelete.push_back(obj);
-		_shadowPass.unbatchedObjects.push_back(objectID);
+		shadowPass_.objectsToDelete_.push_back(obj);
+		shadowPass_.unbatchedObjects_.push_back(objectID);
 
 		passIndices[MeshpassType::DirectionalShadow] = -1;
 	}
@@ -96,8 +96,8 @@ void RenderScene::update_object(Handle<RenderObject> objectID)
 		Handle<PassObject> obj;
 		obj.handle = passIndices[MeshpassType::Transparency];
 
-		_transparentForwardPass.unbatchedObjects.push_back(objectID);
-		_transparentForwardPass.objectsToDelete.push_back(obj);
+		transparentForwardPass_.unbatchedObjects_.push_back(objectID);
+		transparentForwardPass_.objectsToDelete_.push_back(obj);
 
 		passIndices[MeshpassType::Transparency] = -1;
 	}
@@ -106,9 +106,9 @@ void RenderScene::update_object(Handle<RenderObject> objectID)
 	if (get_object(objectID)->updateIndex == (uint32_t)-1)
 	{
 
-		get_object(objectID)->updateIndex = static_cast<uint32_t>(dirtyObjects.size());
+		get_object(objectID)->updateIndex = static_cast<uint32_t>(dirtyObjects_.size());
 
-		dirtyObjects.push_back(objectID);
+		dirtyObjects_.push_back(objectID);
 	}
 }
 
@@ -127,7 +127,7 @@ void RenderScene::write_object(GPUObjectData* target, Handle<RenderObject> objec
 void RenderScene::fill_objectData(GPUObjectData* data)
 {
 	
-	for(int i = 0; i < renderables.size(); i++)
+	for(int i = 0; i < renderables_.size(); i++)
 	{
 		Handle<RenderObject> h;
 		h.handle = i;
@@ -140,9 +140,9 @@ void RenderScene::fill_indirectArray(GPUIndirectObject* data, MeshPass& pass)
 {
 	ZoneScopedNC("Fill Indirect", tracy::Color::Red);
 	int dataIndex = 0;
-	for (int i = 0; i < pass.batches.size(); i++) {
+	for (int i = 0; i < pass.batches_.size(); i++) {
 
-		auto batch = pass.batches[i];
+		auto batch = pass.batches_[i];
 
 		data[dataIndex].command.firstInstance = batch.first;//i;
 		data[dataIndex].command.instanceCount = 0;
@@ -160,15 +160,15 @@ void RenderScene::fill_instancesArray(GPUInstance* data, MeshPass& pass)
 {
 	ZoneScopedNC("Fill Instances", tracy::Color::Red);
 	int dataIndex = 0;
-	for (int i = 0; i < pass.batches.size(); i++) {
+	for (int i = 0; i < pass.batches_.size(); i++) {
 
-		auto batch = pass.batches[i];
+		auto batch = pass.batches_[i];
 
 		
 		for (int b = 0; b < batch.count; b++)
 		{
 			
-			data[dataIndex].objectID = pass.get(pass.flat_batches[b + batch.first].object)->original.handle;
+			data[dataIndex].objectID = pass.get(pass.flat_batches_[b + batch.first].object)->original.handle;
 			data[dataIndex].batchID = i;
 			dataIndex++;
 		}
@@ -177,27 +177,27 @@ void RenderScene::fill_instancesArray(GPUInstance* data, MeshPass& pass)
 
 void RenderScene::clear_dirty_objects()
 {
-	for (auto obj : dirtyObjects)
+	for (auto obj : dirtyObjects_)
 	{
 		get_object(obj)->updateIndex = (uint32_t)-1;
 	}
-	dirtyObjects.clear();
+	dirtyObjects_.clear();
 }
 #include <future>
 void RenderScene::build_batches()
 {
 #if 1
-	auto fwd = std::async(std::launch::async, [&] { refresh_pass(&_forwardPass); });
-	auto shadow = std::async(std::launch::async, [&] { refresh_pass(&_shadowPass); });
-	auto transparent = std::async(std::launch::async, [&] { refresh_pass(&_transparentForwardPass); });
+	auto fwd = std::async(std::launch::async, [&] { refresh_pass(&forwardPass_); });
+	auto shadow = std::async(std::launch::async, [&] { refresh_pass(&shadowPass_); });
+	auto transparent = std::async(std::launch::async, [&] { refresh_pass(&transparentForwardPass_); });
 
 	transparent.get();
 	shadow.get();
 	fwd.get();
 #else
-	refresh_pass(&_forwardPass);
-	refresh_pass(&_transparentForwardPass);
-	refresh_pass(&_shadowPass);
+	refresh_pass(&forwardPass_);
+	refresh_pass(&transparentForwardPass_);
+	refresh_pass(&shadowPass_);
 #endif
 	
 }
@@ -208,7 +208,7 @@ void RenderScene::merge_meshes(VulkanEngine* engine)
 	size_t total_vertices = 0;
 	size_t total_indices = 0;
 
-	for (auto& m : meshes)
+	for (auto& m : meshes_)
 	{
 		m.firstIndex = static_cast<uint32_t>(total_indices);
 		m.firstVertex = static_cast<uint32_t>(total_vertices);
@@ -219,40 +219,40 @@ void RenderScene::merge_meshes(VulkanEngine* engine)
 		m.isMerged = true;
 	}
 
-	mergedVertexBuffer = engine->create_buffer(total_vertices * sizeof(Vertex), VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 
+	mergedVertexBuffer_ = engine->create_buffer(total_vertices * sizeof(Vertex), VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 
 		VMA_MEMORY_USAGE_GPU_ONLY);
 
-	mergedIndexBuffer = engine->create_buffer(total_indices * sizeof(uint32_t), VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+	mergedIndexBuffer_ = engine->create_buffer(total_indices * sizeof(uint32_t), VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
 		VMA_MEMORY_USAGE_GPU_ONLY);
 
 	engine->immediate_submit([&](VkCommandBuffer cmd)
 	{
-		for (auto& m : meshes)
+		for (auto& m : meshes_)
 		{
 			VkBufferCopy vertexCopy;
 			vertexCopy.dstOffset = m.firstVertex * sizeof(Vertex);
 			vertexCopy.size = m.vertexCount * sizeof(Vertex);
 			vertexCopy.srcOffset = 0;
 
-			vkCmdCopyBuffer(cmd, m.original->_vertexBuffer._buffer, mergedVertexBuffer._buffer, 1, &vertexCopy);
+			vkCmdCopyBuffer(cmd, m.original->vertexBuffer_.buffer_, mergedVertexBuffer_.buffer_, 1, &vertexCopy);
 
 			VkBufferCopy indexCopy;
 			indexCopy.dstOffset = m.firstIndex * sizeof(uint32_t);
 			indexCopy.size = m.indexCount * sizeof(uint32_t);
 			indexCopy.srcOffset = 0;
 
-			vkCmdCopyBuffer(cmd, m.original->_indexBuffer._buffer, mergedIndexBuffer._buffer, 1, &indexCopy);
+			vkCmdCopyBuffer(cmd, m.original->indexBuffer_.buffer_, mergedIndexBuffer_.buffer_, 1, &indexCopy);
 		}
 	});
 }
 
 void RenderScene::refresh_pass(MeshPass* pass)
 {
-	pass->needsIndirectRefresh = true;
-	pass->needsInstanceRefresh = true;
+	pass->needsIndirectRefresh_ = true;
+	pass->needsInstanceRefresh_ = true;
 
 	std::vector<uint32_t> new_objects;
-	if(pass->objectsToDelete.size() > 0)
+	if(pass->objectsToDelete_.size() > 0)
 	{
 		ZoneScopedNC("Delete objects", tracy::Color::Blue3);
 
@@ -262,11 +262,11 @@ void RenderScene::refresh_pass(MeshPass* pass)
 		deletion_batches.reserve(new_objects.size());
 		
 	
-		for (auto i : pass->objectsToDelete) {
-			pass->reusableObjects.push_back(i);
+		for (auto i : pass->objectsToDelete_) {
+			pass->reusableObjects_.push_back(i);
 			RenderScene::RenderBatch newCommand;
 
-			auto obj = pass->objects[i.handle];
+			auto obj = pass->objects_[i.handle];
 			newCommand.object= i;
 
 			uint64_t pipelinehash = std::hash<uint64_t>()(uint64_t(obj.material.shaderPass->pipeline));
@@ -279,15 +279,15 @@ void RenderScene::refresh_pass(MeshPass* pass)
 			//pack mesh id and material into 64 bits				
 			newCommand.sortKey = uint64_t(meshmat) | (uint64_t(obj.customKey) << 32);
 
-			pass->objects[i.handle].customKey = 0;
-			pass->objects[i.handle].material.shaderPass = nullptr;
-			pass->objects[i.handle].meshID.handle = -1;
-			pass->objects[i.handle].original.handle = -1;
+			pass->objects_[i.handle].customKey = 0;
+			pass->objects_[i.handle].material.shaderPass = nullptr;
+			pass->objects_[i.handle].meshID.handle = -1;
+			pass->objects_[i.handle].original.handle = -1;
 
 			deletion_batches.push_back(newCommand);
 			
 		}
-		pass->objectsToDelete.clear();
+		pass->objectsToDelete_.clear();
 		{
 			ZoneScopedNC("Deletion Sort", tracy::Color::Blue1);
 			std::sort(deletion_batches.begin(), deletion_batches.end(), [](const RenderScene::RenderBatch& A, const RenderScene::RenderBatch& B) {
@@ -300,25 +300,25 @@ void RenderScene::refresh_pass(MeshPass* pass)
 			ZoneScopedNC("removal", tracy::Color::Blue1);
 
 			std::vector<RenderScene::RenderBatch> newbatches;
-			newbatches.reserve(pass->flat_batches.size());
+			newbatches.reserve(pass->flat_batches_.size());
 
 			{
 				ZoneScopedNC("Set Difference", tracy::Color::Red);
 
-				std::set_difference(pass->flat_batches.begin(), pass->flat_batches.end(), deletion_batches.begin(), deletion_batches.end(), std::back_inserter(newbatches), [](const RenderScene::RenderBatch& A, const RenderScene::RenderBatch& B) {
+				std::set_difference(pass->flat_batches_.begin(), pass->flat_batches_.end(), deletion_batches.begin(), deletion_batches.end(), std::back_inserter(newbatches), [](const RenderScene::RenderBatch& A, const RenderScene::RenderBatch& B) {
 					if (A.sortKey < B.sortKey) { return true; }
 					else if (A.sortKey == B.sortKey) { return A.object.handle < B.object.handle; }
 					else { return false; }
 				});
 			}
-			pass->flat_batches = std::move(newbatches);
+			pass->flat_batches_ = std::move(newbatches);
 		}
 	}
 	{
 		ZoneScopedNC("Fill ObjectList", tracy::Color::Blue2);
 			
-		new_objects.reserve(pass->unbatchedObjects.size());
-		for (auto o : pass->unbatchedObjects)
+		new_objects.reserve(pass->unbatchedObjects_.size());
+		for (auto o : pass->unbatchedObjects_)
 		{
 			RenderScene::PassObject newObject;
 
@@ -327,31 +327,31 @@ void RenderScene::refresh_pass(MeshPass* pass)
 
 			//pack mesh id and material into 32 bits
 			vkutil::Material* mt = get_material(get_object(o)->material);
-			newObject.material.materialSet = mt->passSets[pass->type];
-			newObject.material.shaderPass = mt->original->passShaders[pass->type];
+			newObject.material.materialSet = mt->passSets[pass->type_];
+			newObject.material.shaderPass = mt->original->passShaders[pass->type_];
 			newObject.customKey = get_object(o)->customSortKey;
 
 			uint32_t handle = -1;
 
 			//reuse handle
-			if (pass->reusableObjects.size() > 0)
+			if (pass->reusableObjects_.size() > 0)
 			{
-				handle = pass->reusableObjects.back().handle;
-				pass->reusableObjects.pop_back();
-				pass->objects[handle] = newObject;
+				handle = pass->reusableObjects_.back().handle;
+				pass->reusableObjects_.pop_back();
+				pass->objects_[handle] = newObject;
 			}
 			else 
 			{
-				handle = pass->objects.size();
-				pass->objects.push_back(newObject);
+				handle = pass->objects_.size();
+				pass->objects_.push_back(newObject);
 			}
 
 			
 			new_objects.push_back(handle);
-			get_object(o)->passIndices[pass->type] = static_cast<int32_t>(handle);
+			get_object(o)->passIndices[pass->type_] = static_cast<int32_t>(handle);
 		}
 
-		pass->unbatchedObjects.clear();
+		pass->unbatchedObjects_.clear();
 	}
 
 	std::vector<RenderScene::RenderBatch> new_batches;
@@ -364,7 +364,7 @@ void RenderScene::refresh_pass(MeshPass* pass)
 			{
 				RenderScene::RenderBatch newCommand;
 
-				auto obj = pass->objects[i];
+				auto obj = pass->objects_[i];
 				newCommand.object.handle = i;
 
 				uint64_t pipelinehash = std::hash<uint64_t>()(uint64_t(obj.material.shaderPass->pipeline));
@@ -395,19 +395,19 @@ void RenderScene::refresh_pass(MeshPass* pass)
 
 		//merge the new batches into the main batch array
 
-		if (pass->flat_batches.size() > 0 && new_batches.size() > 0)
+		if (pass->flat_batches_.size() > 0 && new_batches.size() > 0)
 		{
-			size_t index = pass->flat_batches.size();
-			pass->flat_batches.reserve(pass->flat_batches.size() + new_batches.size());
+			size_t index = pass->flat_batches_.size();
+			pass->flat_batches_.reserve(pass->flat_batches_.size() + new_batches.size());
 			
 			for (auto b : new_batches)
 			{
-				pass->flat_batches.push_back(b);
+				pass->flat_batches_.push_back(b);
 			}
 
-			RenderScene::RenderBatch* begin = pass->flat_batches.data();
+			RenderScene::RenderBatch* begin = pass->flat_batches_.data();
 			RenderScene::RenderBatch* mid = begin + index;
-			RenderScene::RenderBatch* end = begin + pass->flat_batches.size();
+			RenderScene::RenderBatch* end = begin + pass->flat_batches_.size();
 			//std::sort(pass->flat_batches.begin(), pass->flat_batches.end(), [](const RenderScene::RenderBatch& A, const RenderScene::RenderBatch& B) {
 			//	return A.sortKey < B.sortKey;
 			//	});
@@ -417,32 +417,32 @@ void RenderScene::refresh_pass(MeshPass* pass)
 				else { return false; }
 			});
 		}
-		else if (pass->flat_batches.size() == 0)
+		else if (pass->flat_batches_.size() == 0)
 		{
-			pass->flat_batches = std::move(new_batches);
+			pass->flat_batches_ = std::move(new_batches);
 		}
 	}
 	
 	{
 		ZoneScopedNC("Draw Merge", tracy::Color::Blue);
 
-		pass->batches.clear();
+		pass->batches_.clear();
 
-		build_indirect_batches(pass,pass->batches,pass->flat_batches);
+		build_indirect_batches(pass,pass->batches_,pass->flat_batches_);
 
 		//flatten batches into multibatch
 		Multibatch newbatch;
-		pass->multibatches.clear();
+		pass->multibatches_.clear();
 
 		
 		newbatch.count = 1;
 		newbatch.first = 0;
 		 
 #if 1
-		for (int i = 1; i < pass->batches.size(); i++)
+		for (int i = 1; i < pass->batches_.size(); i++)
 		{
-			IndirectBatch* joinbatch = &pass->batches[newbatch.first];
-			IndirectBatch* batch = &pass->batches[i];
+			IndirectBatch* joinbatch = &pass->batches_[newbatch.first];
+			IndirectBatch* batch = &pass->batches_[i];
 
 			
 			bool bCompatibleMesh = get_mesh(joinbatch->meshID)->isMerged;
@@ -460,7 +460,7 @@ void RenderScene::refresh_pass(MeshPass* pass)
 
 			if (!bSameMat || !bCompatibleMesh)
 			{
-				pass->multibatches.push_back(newbatch);
+				pass->multibatches_.push_back(newbatch);
 				newbatch.count = 1;
 				newbatch.first = i;
 			}
@@ -468,15 +468,15 @@ void RenderScene::refresh_pass(MeshPass* pass)
 				newbatch.count++;
 			}
 		}
-		pass->multibatches.push_back(newbatch);
+		pass->multibatches_.push_back(newbatch);
 #else 
-		for (int i = 0; i < pass->batches.size(); i++)
+		for (int i = 0; i < pass->batches_.size(); i++)
 		{
 			Multibatch newbatch;
 			newbatch.count = 1;
 			newbatch.first = i;
 
-			pass->multibatches.push_back(newbatch);
+			pass->multibatches_.push_back(newbatch);
 		}
 #endif
 	}
@@ -496,7 +496,7 @@ void RenderScene::build_indirect_batches(MeshPass* pass, std::vector<IndirectBat
 	newBatch.meshID = pass->get(inobjects[0].object)->meshID;
 
 	outbatches.push_back(newBatch);
-	RenderScene::IndirectBatch* back = &pass->batches.back();
+	RenderScene::IndirectBatch* back = &pass->batches_.back();
 
 	RenderScene::PassMaterial lastMat = pass->get(inobjects[0].object)->material;
 	for (int i = 0; i <inobjects.size(); i++) {
@@ -538,17 +538,17 @@ void RenderScene::build_indirect_batches(MeshPass* pass, std::vector<IndirectBat
 
 RenderObject* RenderScene::get_object(Handle<RenderObject> objectID)
 {
-	return &renderables[objectID.handle];
+	return &renderables_[objectID.handle];
 }
 
 DrawMesh* RenderScene::get_mesh(Handle<DrawMesh> objectID)
 {
-	return &meshes[objectID.handle];
+	return &meshes_[objectID.handle];
 }
 
 vkutil::Material* RenderScene::get_material(Handle<vkutil::Material> objectID)
 {
-	return materials[objectID.handle];
+	return materials_[objectID.handle];
 }
 
 RenderScene::MeshPass* RenderScene::get_mesh_pass(MeshpassType name)
@@ -556,13 +556,13 @@ RenderScene::MeshPass* RenderScene::get_mesh_pass(MeshpassType name)
 	switch (name)
 	{	
 	case MeshpassType::Forward:
-		return &_forwardPass;
+		return &forwardPass_;
 		break;
 	case MeshpassType::Transparency:
-		return &_transparentForwardPass;
+		return &transparentForwardPass_;
 		break;
 	case MeshpassType::DirectionalShadow:
-		return &_shadowPass;
+		return &shadowPass_;
 		break;
 	}
 	return nullptr;
@@ -571,14 +571,14 @@ RenderScene::MeshPass* RenderScene::get_mesh_pass(MeshpassType name)
 Handle<vkutil::Material> RenderScene::getMaterialHandle(vkutil::Material* m)
 {	
 	Handle<vkutil::Material> handle;
-	auto it = materialConvert.find(m);
-	if (it == materialConvert.end())
+	auto it = materialConvert_.find(m);
+	if (it == materialConvert_.end())
 	{
-		uint32_t index = static_cast<uint32_t>(materials.size());
-		materials.push_back(m);
+		uint32_t index = static_cast<uint32_t>(materials_.size());
+		materials_.push_back(m);
 
 		handle.handle = index;
-		materialConvert[m] = handle;
+		materialConvert_[m] = handle;
 	}
 	else {
 		handle = (*it).second;
@@ -589,22 +589,22 @@ Handle<vkutil::Material> RenderScene::getMaterialHandle(vkutil::Material* m)
 Handle<DrawMesh> RenderScene::getMeshHandle(Mesh* m)
 {
 	Handle<DrawMesh> handle;
-	auto it = meshConvert.find(m);
-	if (it == meshConvert.end())
+	auto it = meshConvert_.find(m);
+	if (it == meshConvert_.end())
 	{
-		uint32_t index = static_cast<uint32_t>(meshes.size());
+		uint32_t index = static_cast<uint32_t>(meshes_.size());
 
 		DrawMesh newMesh;
 		newMesh.original = m;
 		newMesh.firstIndex = 0;
 		newMesh.firstVertex = 0;
-		newMesh.vertexCount = static_cast<uint32_t>(m->_vertices.size());
-		newMesh.indexCount = static_cast<uint32_t>(m->_indices.size());
+		newMesh.vertexCount = static_cast<uint32_t>(m->vertices_.size());
+		newMesh.indexCount = static_cast<uint32_t>(m->indices_.size());
 
-		meshes.push_back(newMesh);
+		meshes_.push_back(newMesh);
 
 		handle.handle = index;
-		meshConvert[m] = handle;
+		meshConvert_[m] = handle;
 	}
 	else {
 		handle = (*it).second;
@@ -614,5 +614,5 @@ Handle<DrawMesh> RenderScene::getMeshHandle(Mesh* m)
 
 RenderScene::PassObject* RenderScene::MeshPass::get(Handle<PassObject> handle)
 {
-	return &objects[handle.handle];
+	return &objects_[handle.handle];
 }

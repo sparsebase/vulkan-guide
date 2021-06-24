@@ -134,81 +134,81 @@ bool Mesh::load_from_meshasset(const char* filename)
 
 	assets::unpack_mesh(&meshinfo, file.binaryBlob.data(), file.binaryBlob.size(), vertexBuffer.data(), indexBuffer.data());
 
-	bounds.extents.x = meshinfo.bounds.extents[0];
-	bounds.extents.y = meshinfo.bounds.extents[1];
-	bounds.extents.z = meshinfo.bounds.extents[2];
+	bounds_.extents.x = meshinfo.bounds.extents[0];
+	bounds_.extents.y = meshinfo.bounds.extents[1];
+	bounds_.extents.z = meshinfo.bounds.extents[2];
 
-	bounds.origin.x = meshinfo.bounds.origin[0];
-	bounds.origin.y = meshinfo.bounds.origin[1];
-	bounds.origin.z = meshinfo.bounds.origin[2];
+	bounds_.origin.x = meshinfo.bounds.origin[0];
+	bounds_.origin.y = meshinfo.bounds.origin[1];
+	bounds_.origin.z = meshinfo.bounds.origin[2];
 
-	bounds.radius = meshinfo.bounds.radius;
-	bounds.valid = true;
+	bounds_.radius = meshinfo.bounds.radius;
+	bounds_.valid = true;
 
-	_vertices.clear();
-	_indices.clear();
+	vertices_.clear();
+	indices_.clear();
 
-	_indices.resize(indexBuffer.size() / sizeof(uint32_t));
-	for (int i = 0; i < _indices.size(); i++) {
+	indices_.resize(indexBuffer.size() / sizeof(uint32_t));
+	for (int i = 0; i < indices_.size(); i++) {
 		uint32_t* unpacked_indices = (uint32_t*)indexBuffer.data();
-		_indices[i] = unpacked_indices[i];
+		indices_[i] = unpacked_indices[i];
 	}
 
 	if (meshinfo.vertexFormat == assets::VertexFormat::PNCV_F32)
 	{
 		assets::Vertex_f32_PNCV* unpackedVertices = (assets::Vertex_f32_PNCV*)vertexBuffer.data();
 
-		_vertices.resize(vertexBuffer.size() / sizeof(assets::Vertex_f32_PNCV));
+		vertices_.resize(vertexBuffer.size() / sizeof(assets::Vertex_f32_PNCV));
 
-		for (int i = 0; i < _vertices.size(); i++) {
+		for (int i = 0; i < vertices_.size(); i++) {
 
-			_vertices[i].position.x = unpackedVertices[i].position[0];
-			_vertices[i].position.y = unpackedVertices[i].position[1];
-			_vertices[i].position.z = unpackedVertices[i].position[2];
+			vertices_[i].position.x = unpackedVertices[i].position[0];
+			vertices_[i].position.y = unpackedVertices[i].position[1];
+			vertices_[i].position.z = unpackedVertices[i].position[2];
 
 			vec3 normal = vec3( 
 				unpackedVertices[i].normal[0],
 				unpackedVertices[i].normal[1],
 				unpackedVertices[i].normal[2] );
-			_vertices[i].pack_normal(normal);
+			vertices_[i].pack_normal(normal);
 
-			_vertices[i].pack_color(vec3{ unpackedVertices[i].color[0] ,unpackedVertices[i].color[1] ,unpackedVertices[i].color[2] });
+			vertices_[i].pack_color(vec3{ unpackedVertices[i].color[0] ,unpackedVertices[i].color[1] ,unpackedVertices[i].color[2] });
 
 
-			_vertices[i].uv.x = unpackedVertices[i].uv[0];
-			_vertices[i].uv.y = unpackedVertices[i].uv[1];
+			vertices_[i].uv.x = unpackedVertices[i].uv[0];
+			vertices_[i].uv.y = unpackedVertices[i].uv[1];
 		}
 	}
 	else if (meshinfo.vertexFormat == assets::VertexFormat::P32N8C8V16)
 	{
 		assets::Vertex_P32N8C8V16* unpackedVertices = (assets::Vertex_P32N8C8V16*)vertexBuffer.data();
 
-		_vertices.resize(vertexBuffer.size() / sizeof(assets::Vertex_P32N8C8V16));
+		vertices_.resize(vertexBuffer.size() / sizeof(assets::Vertex_P32N8C8V16));
 
-		for (int i = 0; i < _vertices.size(); i++) {
+		for (int i = 0; i < vertices_.size(); i++) {
 
-			_vertices[i].position.x = unpackedVertices[i].position[0];
-			_vertices[i].position.y = unpackedVertices[i].position[1];
-			_vertices[i].position.z = unpackedVertices[i].position[2];
+			vertices_[i].position.x = unpackedVertices[i].position[0];
+			vertices_[i].position.y = unpackedVertices[i].position[1];
+			vertices_[i].position.z = unpackedVertices[i].position[2];
 
-			_vertices[i].pack_normal(vec3{ 
+			vertices_[i].pack_normal(vec3{ 
 				 unpackedVertices[i].normal[0]
 				,unpackedVertices[i].normal[1]
 				,unpackedVertices[i].normal[2] });
 
-			_vertices[i].color.x = unpackedVertices[i].color[0];// / 255.f;
-			_vertices[i].color.y = unpackedVertices[i].color[1];// / 255.f;
-			_vertices[i].color.z = unpackedVertices[i].color[2];// / 255.f;
+			vertices_[i].color.x = unpackedVertices[i].color[0];// / 255.f;
+			vertices_[i].color.y = unpackedVertices[i].color[1];// / 255.f;
+			vertices_[i].color.z = unpackedVertices[i].color[2];// / 255.f;
 
-			_vertices[i].uv.x = unpackedVertices[i].uv[0];
-			_vertices[i].uv.y = unpackedVertices[i].uv[1];
+			vertices_[i].uv.x = unpackedVertices[i].uv[0];
+			vertices_[i].uv.y = unpackedVertices[i].uv[1];
 		}
 	}
 
 	
 	if (logMeshUpload)
 	{
-		LOG_SUCCESS("Loaded mesh {} : Verts={}, Tris={}", filename, _vertices.size(), _indices.size() / 3);
+		LOG_SUCCESS("Loaded mesh {} : Verts={}, Tris={}", filename, vertices_.size(), indices_.size() / 3);
 	}
 
 	return true;

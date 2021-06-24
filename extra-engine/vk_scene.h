@@ -106,33 +106,33 @@ public:
 	};
 	struct MeshPass {
 
-		std::vector<RenderScene::Multibatch> multibatches;
+		std::vector<RenderScene::Multibatch> multibatches_;
 
-		std::vector<RenderScene::IndirectBatch> batches;
+		std::vector<RenderScene::IndirectBatch> batches_;
 
-		std::vector<Handle<RenderObject>> unbatchedObjects;
+		std::vector<Handle<RenderObject>> unbatchedObjects_;
 
-		std::vector<RenderScene::RenderBatch> flat_batches;
+		std::vector<RenderScene::RenderBatch> flat_batches_;
 
-		std::vector<PassObject> objects;
+		std::vector<PassObject> objects_;
 
-		std::vector<Handle<PassObject>> reusableObjects;
+		std::vector<Handle<PassObject>> reusableObjects_;
 
-		std::vector<Handle<PassObject>> objectsToDelete;
+		std::vector<Handle<PassObject>> objectsToDelete_;
 
 		
-		AllocatedBuffer<uint32_t> compactedInstanceBuffer;
-		AllocatedBuffer<GPUInstance> passObjectsBuffer;
+		AllocatedBuffer<uint32_t> compactedInstanceBuffer_;
+		AllocatedBuffer<GPUInstance> passObjectsBuffer_;
 
-		AllocatedBuffer<GPUIndirectObject> drawIndirectBuffer;
-		AllocatedBuffer<GPUIndirectObject> clearIndirectBuffer;
+		AllocatedBuffer<GPUIndirectObject> drawIndirectBuffer_;
+		AllocatedBuffer<GPUIndirectObject> clearIndirectBuffer_;
 
 		PassObject* get(Handle<PassObject> handle);
 
-		MeshpassType type;
+		MeshpassType type_;
 
-		bool needsIndirectRefresh = true;
-		bool needsInstanceRefresh = true;
+		bool needsIndirectRefresh_ = true;
+		bool needsInstanceRefresh_ = true;
 	};
 
 	void init();
@@ -164,28 +164,28 @@ public:
 
 	vkutil::Material *get_material(Handle<vkutil::Material> objectID);
 
-	std::vector<RenderObject> renderables;
-	std::vector<DrawMesh> meshes;
-	std::vector<vkutil::Material*> materials;
+	std::vector<RenderObject> renderables_;
+	std::vector<DrawMesh> meshes_;
+	std::vector<vkutil::Material*> materials_;
 
-	std::vector<Handle<RenderObject>> dirtyObjects;
+	std::vector<Handle<RenderObject>> dirtyObjects_;
 
 	MeshPass* get_mesh_pass(MeshpassType name);
 
-	MeshPass _forwardPass;
-	MeshPass _transparentForwardPass;
-	MeshPass _shadowPass;
+	MeshPass forwardPass_;
+	MeshPass transparentForwardPass_;
+	MeshPass shadowPass_;
 
-	std::unordered_map<vkutil::Material*, Handle<vkutil::Material>> materialConvert;
-	std::unordered_map<Mesh*, Handle<DrawMesh>> meshConvert;
+	std::unordered_map<vkutil::Material*, Handle<vkutil::Material>> materialConvert_;
+	std::unordered_map<Mesh*, Handle<DrawMesh>> meshConvert_;
 
 	Handle<vkutil::Material> getMaterialHandle(vkutil::Material* m);
 	Handle<DrawMesh> getMeshHandle(Mesh* m);
 	
 
-	AllocatedBuffer<Vertex> mergedVertexBuffer;
-	AllocatedBuffer<uint32_t> mergedIndexBuffer;
+	AllocatedBuffer<Vertex> mergedVertexBuffer_;
+	AllocatedBuffer<uint32_t> mergedIndexBuffer_;
 
-	AllocatedBuffer<GPUObjectData> objectDataBuffer;
+	AllocatedBuffer<GPUObjectData> objectDataBuffer_;
 };
 

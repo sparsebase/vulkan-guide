@@ -2,33 +2,33 @@
 
 uint32_t vkutil::PushBuffer::push(void* data, size_t size)
 {
-	uint32_t offset = currentOffset;
-	char* target = (char*)mapped;
-	target += currentOffset;
+	uint32_t offset = currentOffset_;
+	char* target = (char*)mapped_;
+	target += currentOffset_;
 	memcpy(target, data, size);
-	currentOffset += static_cast<uint32_t>(size);
-	currentOffset = pad_uniform_buffer_size(currentOffset);
+	currentOffset_ += static_cast<uint32_t>(size);
+	currentOffset_ = pad_uniform_buffer_size(currentOffset_);
 
 	return offset;
 }
 
 void vkutil::PushBuffer::init(VmaAllocator& allocator, AllocatedBufferUntyped sourceBuffer, uint32_t alignement)
 {
-	align = alignement;
-	source = sourceBuffer;
-	currentOffset = 0;
-	vmaMapMemory(allocator, sourceBuffer._allocation, &mapped);
+	align_ = alignement;
+	source_ = sourceBuffer;
+	currentOffset_ = 0;
+	vmaMapMemory(allocator, sourceBuffer.allocation_, &mapped_);
 }
 
 void vkutil::PushBuffer::reset()
 {
-	currentOffset = 0;
+	currentOffset_ = 0;
 }
 
 uint32_t vkutil::PushBuffer::pad_uniform_buffer_size(uint32_t originalSize)
 {
 	// Calculate required alignment based on minimum device offset alignment
-	size_t minUboAlignment = align;
+	size_t minUboAlignment = align_;
 	size_t alignedSize = originalSize;
 	if (minUboAlignment > 0) {
 		alignedSize = (alignedSize + minUboAlignment - 1) & ~(minUboAlignment - 1);
