@@ -2049,16 +2049,16 @@ void VulkanEngine::init_descriptors()
 	descriptorLayoutCache_->init(device_);
 
 
-	VkDescriptorSetLayoutBinding textureBind = vkinit::descriptorset_layout_binding(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0);
-
-	VkDescriptorSetLayoutCreateInfo set3info = {};
-	set3info.bindingCount = 1;
-	set3info.flags = 0;
-	set3info.pNext = nullptr;
-	set3info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-	set3info.pBindings = &textureBind;
-
-	singleTextureSetLayout_ = descriptorLayoutCache_->create_descriptor_layout(&set3info);
+// 	VkDescriptorSetLayoutBinding textureBind = vkinit::descriptorset_layout_binding(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 0);
+// 
+// 	VkDescriptorSetLayoutCreateInfo set3info = {};
+// 	set3info.bindingCount = 1;
+// 	set3info.flags = 0;
+// 	set3info.pNext = nullptr;
+// 	set3info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+// 	set3info.pBindings = &textureBind;
+// 
+// 	singleTextureSetLayout_ = descriptorLayoutCache_->create_descriptor_layout(&set3info);
 
 
 	const size_t sceneParamBufferSize = FRAME_OVERLAP * pad_uniform_buffer_size(sizeof(GPUSceneData));

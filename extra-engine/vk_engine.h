@@ -279,7 +279,7 @@ public:
 	vkutil::VulkanProfiler* profiler_;
 	vkutil::MaterialSystem* materialSystem_;
 
-	VkDescriptorSetLayout singleTextureSetLayout_;
+	//VkDescriptorSetLayout singleTextureSetLayout_;
 
 	GPUSceneData sceneParameters_;
 
