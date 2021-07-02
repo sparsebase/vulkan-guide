@@ -14,17 +14,17 @@
 class PipelineBuilder {
 public:
 
-	std::vector<VkPipelineShaderStageCreateInfo> _shaderStages;
-	VertexInputDescription vertexDescription;
-	VkPipelineVertexInputStateCreateInfo _vertexInputInfo;
-	VkPipelineInputAssemblyStateCreateInfo _inputAssembly;
-	VkViewport _viewport;
-	VkRect2D _scissor;
-	VkPipelineRasterizationStateCreateInfo _rasterizer;
-	VkPipelineColorBlendAttachmentState _colorBlendAttachment;
-	VkPipelineMultisampleStateCreateInfo _multisampling;
-	VkPipelineLayout _pipelineLayout;
-	VkPipelineDepthStencilStateCreateInfo _depthStencil;
+	std::vector<VkPipelineShaderStageCreateInfo> shaderStages_;
+	VertexInputDescription vertexDescription_;
+	VkPipelineVertexInputStateCreateInfo vertexInputInfo_;
+	VkPipelineInputAssemblyStateCreateInfo inputAssembly_;
+	VkViewport viewport_;
+	VkRect2D scissor_;
+	VkPipelineRasterizationStateCreateInfo rasterizer_;
+	VkPipelineColorBlendAttachmentState colorBlendAttachment_;
+	VkPipelineMultisampleStateCreateInfo multisampling_;
+	VkPipelineLayout pipelineLayout_;
+	VkPipelineDepthStencilStateCreateInfo depthStencil_;
 	VkPipeline build_pipeline(VkDevice device, VkRenderPass pass);
 	void clear_vertex_input();
 

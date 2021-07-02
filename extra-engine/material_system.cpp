@@ -27,13 +27,13 @@ VkPipeline ComputePipelineBuilder::build_pipeline(VkDevice device)
 }
 VkPipeline PipelineBuilder::build_pipeline(VkDevice device, VkRenderPass pass)
 {
-	_vertexInputInfo = vkinit::vertex_input_state_create_info();
+	vertexInputInfo_ = vkinit::vertex_input_state_create_info();
 //connect the pipeline builder vertex input info to the one we get from Vertex
-	_vertexInputInfo.pVertexAttributeDescriptions = vertexDescription.attributes.data();
-	_vertexInputInfo.vertexAttributeDescriptionCount = (uint32_t)vertexDescription.attributes.size();
+	vertexInputInfo_.pVertexAttributeDescriptions = vertexDescription_.attributes.data();
+	vertexInputInfo_.vertexAttributeDescriptionCount = (uint32_t)vertexDescription_.attributes.size();
 
-	_vertexInputInfo.pVertexBindingDescriptions = vertexDescription.bindings.data();
-	_vertexInputInfo.vertexBindingDescriptionCount = (uint32_t)vertexDescription.bindings.size();
+	vertexInputInfo_.pVertexBindingDescriptions = vertexDescription_.bindings.data();
+	vertexInputInfo_.vertexBindingDescriptionCount = (uint32_t)vertexDescription_.bindings.size();
 
 
 	//make viewport state from our stored viewport and scissor.
@@ -43,9 +43,9 @@ VkPipeline PipelineBuilder::build_pipeline(VkDevice device, VkRenderPass pass)
 	viewportState.pNext = nullptr;
 
 	viewportState.viewportCount = 1;
-	viewportState.pViewports = &_viewport;
+	viewportState.pViewports = &viewport_;
 	viewportState.scissorCount = 1;
-	viewportState.pScissors = &_scissor;
+	viewportState.pScissors = &scissor_;
 
 	//setup dummy color blending. We arent using transparent objects yet
 	//the blending is just "no blend", but we do write to the color attachment
@@ -56,7 +56,7 @@ VkPipeline PipelineBuilder::build_pipeline(VkDevice device, VkRenderPass pass)
 	colorBlending.logicOpEnable = VK_FALSE;
 	colorBlending.logicOp = VK_LOGIC_OP_COPY;
 	colorBlending.attachmentCount = 1;
-	colorBlending.pAttachments = &_colorBlendAttachment;
+	colorBlending.pAttachments = &colorBlendAttachment_;
 
 	//build the actual pipeline
 	//we now use all of the info structs we have been writing into into this one to create the pipeline
@@ -64,16 +64,16 @@ VkPipeline PipelineBuilder::build_pipeline(VkDevice device, VkRenderPass pass)
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	pipelineInfo.pNext = nullptr;
 
-	pipelineInfo.stageCount = (uint32_t)_shaderStages.size();
-	pipelineInfo.pStages = _shaderStages.data();
-	pipelineInfo.pVertexInputState = &_vertexInputInfo;
-	pipelineInfo.pInputAssemblyState = &_inputAssembly;
+	pipelineInfo.stageCount = (uint32_t)shaderStages_.size();
+	pipelineInfo.pStages = shaderStages_.data();
+	pipelineInfo.pVertexInputState = &vertexInputInfo_;
+	pipelineInfo.pInputAssemblyState = &inputAssembly_;
 	pipelineInfo.pViewportState = &viewportState;
-	pipelineInfo.pRasterizationState = &_rasterizer;
-	pipelineInfo.pMultisampleState = &_multisampling;
+	pipelineInfo.pRasterizationState = &rasterizer_;
+	pipelineInfo.pMultisampleState = &multisampling_;
 	pipelineInfo.pColorBlendState = &colorBlending;
-	pipelineInfo.pDepthStencilState = &_depthStencil;
-	pipelineInfo.layout = _pipelineLayout;
+	pipelineInfo.pDepthStencilState = &depthStencil_;
+	pipelineInfo.layout = pipelineLayout_;
 	pipelineInfo.renderPass = pass;
 	pipelineInfo.subpass = 0;
 	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
@@ -107,19 +107,19 @@ VkPipeline PipelineBuilder::build_pipeline(VkDevice device, VkRenderPass pass)
 
 void PipelineBuilder::clear_vertex_input()
 {
-	_vertexInputInfo.pVertexAttributeDescriptions = nullptr;
-	_vertexInputInfo.vertexAttributeDescriptionCount = 0;
+	vertexInputInfo_.pVertexAttributeDescriptions = nullptr;
+	vertexInputInfo_.vertexAttributeDescriptionCount = 0;
 
-	_vertexInputInfo.pVertexBindingDescriptions = nullptr;
-	_vertexInputInfo.vertexBindingDescriptionCount = 0;
+	vertexInputInfo_.pVertexBindingDescriptions = nullptr;
+	vertexInputInfo_.vertexBindingDescriptionCount = 0;
 }
 
 void PipelineBuilder::setShaders(ShaderEffect* effect)
 {
-	_shaderStages.clear();
-	effect->fill_stages(_shaderStages);
+	shaderStages_.clear();
+	effect->fill_stages(shaderStages_);
 
-	_pipelineLayout = effect->builtLayout;
+	pipelineLayout_ = effect->builtLayout;
 }
 
 void vkutil::MaterialSystem::init(VulkanEngine* owner)
@@ -182,18 +182,18 @@ void vkutil::MaterialSystem::build_default_templates()
 	{
 		PipelineBuilder transparentForward = forwardBuilder;
 
-		transparentForward._colorBlendAttachment.blendEnable = VK_TRUE;
-		transparentForward._colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
-		transparentForward._colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-		transparentForward._colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
+		transparentForward.colorBlendAttachment_.blendEnable = VK_TRUE;
+		transparentForward.colorBlendAttachment_.colorBlendOp = VK_BLEND_OP_ADD;
+		transparentForward.colorBlendAttachment_.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+		transparentForward.colorBlendAttachment_.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
 
 
 		//transparentForward._colorBlendAttachment.colorBlendOp = VK_BLEND_OP_OVERLAY_EXT;
-		transparentForward._colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT;
+		transparentForward.colorBlendAttachment_.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT;
 		
-		transparentForward._depthStencil.depthWriteEnable = false;
+		transparentForward.depthStencil_.depthWriteEnable = false;
 
-		transparentForward._rasterizer.cullMode = VK_CULL_MODE_NONE;
+		transparentForward.rasterizer_.cullMode = VK_CULL_MODE_NONE;
 		//passes
 		ShaderPass* transparentLitPass = build_shader(engine->renderPass_, transparentForward, texturedLit);
 
@@ -300,35 +300,35 @@ vkutil::Material* vkutil::MaterialSystem::get_material(const std::string& materi
 void vkutil::MaterialSystem::fill_builders()
 {
 	{
-		shadowBuilder.vertexDescription = Vertex::get_vertex_description();
+		shadowBuilder.vertexDescription_ = Vertex::get_vertex_description();
 
-		shadowBuilder._inputAssembly = vkinit::input_assembly_create_info(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+		shadowBuilder.inputAssembly_ = vkinit::input_assembly_create_info(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
 		
-		shadowBuilder._rasterizer = vkinit::rasterization_state_create_info(VK_POLYGON_MODE_FILL);
-		shadowBuilder._rasterizer.cullMode = VK_CULL_MODE_FRONT_BIT;
-		shadowBuilder._rasterizer.depthBiasEnable = VK_TRUE;
+		shadowBuilder.rasterizer_ = vkinit::rasterization_state_create_info(VK_POLYGON_MODE_FILL);
+		shadowBuilder.rasterizer_.cullMode = VK_CULL_MODE_FRONT_BIT;
+		shadowBuilder.rasterizer_.depthBiasEnable = VK_TRUE;
 		
-		shadowBuilder._multisampling = vkinit::multisampling_state_create_info();
-		shadowBuilder._colorBlendAttachment = vkinit::color_blend_attachment_state();
+		shadowBuilder.multisampling_ = vkinit::multisampling_state_create_info();
+		shadowBuilder.colorBlendAttachment_ = vkinit::color_blend_attachment_state();
 
 		//default depthtesting
-		shadowBuilder._depthStencil = vkinit::depth_stencil_create_info(true, true, VK_COMPARE_OP_LESS);
+		shadowBuilder.depthStencil_ = vkinit::depth_stencil_create_info(true, true, VK_COMPARE_OP_LESS);
 	}
 	{
-		forwardBuilder.vertexDescription = Vertex::get_vertex_description();
+		forwardBuilder.vertexDescription_ = Vertex::get_vertex_description();
 		
-		forwardBuilder._inputAssembly = vkinit::input_assembly_create_info(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+		forwardBuilder.inputAssembly_ = vkinit::input_assembly_create_info(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
 
 		
-		forwardBuilder._rasterizer = vkinit::rasterization_state_create_info(VK_POLYGON_MODE_FILL);
-		forwardBuilder._rasterizer.cullMode = VK_CULL_MODE_NONE;//BACK_BIT;
+		forwardBuilder.rasterizer_ = vkinit::rasterization_state_create_info(VK_POLYGON_MODE_FILL);
+		forwardBuilder.rasterizer_.cullMode = VK_CULL_MODE_NONE;//BACK_BIT;
 		
-		forwardBuilder._multisampling = vkinit::multisampling_state_create_info();
+		forwardBuilder.multisampling_ = vkinit::multisampling_state_create_info();
 		
-		forwardBuilder._colorBlendAttachment = vkinit::color_blend_attachment_state();
+		forwardBuilder.colorBlendAttachment_ = vkinit::color_blend_attachment_state();
 
 		//default depthtesting
-		forwardBuilder._depthStencil = vkinit::depth_stencil_create_info(true, true, VK_COMPARE_OP_GREATER_OR_EQUAL);
+		forwardBuilder.depthStencil_ = vkinit::depth_stencil_create_info(true, true, VK_COMPARE_OP_GREATER_OR_EQUAL);
 	}	
 }
 

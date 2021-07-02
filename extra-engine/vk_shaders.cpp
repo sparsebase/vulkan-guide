@@ -204,8 +204,7 @@ void ShaderEffect::reflect_layout(VkDevice device, ReflectionOverrides* override
 				}
 			}
 		}
-		for (auto [k, v] : binds)
-		{
+		for (auto [k, v] : binds) {
 			ly.bindings.push_back(v);
 		}
 		//sort the bindings, for hash purposes
@@ -409,19 +408,19 @@ void ShaderDescriptorBinder::set_shader(ShaderEffect* newShader)
 ShaderModule* ShaderCache::get_shader(const std::string& path)
 {
 	auto curpath = std::filesystem::current_path();
-	auto it = module_cache.find(path);
-	if (it == module_cache.end())
+	auto it = module_cache_.find(path);
+	if (it == module_cache_.end())
 	{	
 		ShaderModule newShader;
 
-		bool result = vkutil::load_shader_module(_device, path.c_str(), &newShader);
+		bool result = vkutil::load_shader_module(device_, path.c_str(), &newShader);
 		if (!result)
 		{
 			std::cout << "Error when compiling shader " << path << std::endl;
 			return nullptr;
 		}
 
-		module_cache[path] = newShader;
+		module_cache_[path] = newShader;
 	}
-	return &module_cache[path];
+	return &module_cache_[path];
 }

@@ -1341,20 +1341,20 @@ void VulkanEngine::init_pipelines()
 
 	//input assembly is the configuration for drawing triangle lists, strips, or individual points.
 	//we are just going to draw triangle list
-	pipelineBuilder._inputAssembly = vkinit::input_assembly_create_info(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+	pipelineBuilder.inputAssembly_ = vkinit::input_assembly_create_info(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
 
 	//configure the rasterizer to draw filled triangles
-	pipelineBuilder._rasterizer = vkinit::rasterization_state_create_info(VK_POLYGON_MODE_FILL);
-	pipelineBuilder._rasterizer.cullMode = VK_CULL_MODE_NONE;
+	pipelineBuilder.rasterizer_ = vkinit::rasterization_state_create_info(VK_POLYGON_MODE_FILL);
+	pipelineBuilder.rasterizer_.cullMode = VK_CULL_MODE_NONE;
 	//we dont use multisampling, so just run the default one
-	pipelineBuilder._multisampling = vkinit::multisampling_state_create_info();
+	pipelineBuilder.multisampling_ = vkinit::multisampling_state_create_info();
 
 	//a single blend attachment with no blending and writing to RGBA
-	pipelineBuilder._colorBlendAttachment = vkinit::color_blend_attachment_state();
+	pipelineBuilder.colorBlendAttachment_ = vkinit::color_blend_attachment_state();
 
 
 	//default depthtesting
-	pipelineBuilder._depthStencil = vkinit::depth_stencil_create_info(true, true, VK_COMPARE_OP_GREATER_OR_EQUAL);
+	pipelineBuilder.depthStencil_ = vkinit::depth_stencil_create_info(true, true, VK_COMPARE_OP_GREATER_OR_EQUAL);
 
 	//build blit pipeline
 	pipelineBuilder.setShaders(blitEffect);
@@ -1362,7 +1362,7 @@ void VulkanEngine::init_pipelines()
 	//blit pipeline uses hardcoded triangle so no need for vertex input
 	pipelineBuilder.clear_vertex_input();
 
-	pipelineBuilder._depthStencil = vkinit::depth_stencil_create_info(false, false, VK_COMPARE_OP_ALWAYS);
+	pipelineBuilder.depthStencil_ = vkinit::depth_stencil_create_info(false, false, VK_COMPARE_OP_ALWAYS);
 
 	blitPipeline_ = pipelineBuilder.build_pipeline(device_, copyPass_);
 	blitLayout_ = blitEffect->builtLayout;

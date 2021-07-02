@@ -98,8 +98,8 @@ public:
 
 	ShaderModule* get_shader(const std::string& path);
 
-	void init(VkDevice device) { _device = device; };
+	void init(VkDevice device) { device_ = device; };
 private:
-	VkDevice _device;
-	std::unordered_map<std::string, ShaderModule> module_cache;
+	VkDevice device_;
+	std::unordered_map<std::string, ShaderModule> module_cache_;
 };
