@@ -50,8 +50,8 @@ class EffectBuilder {
 class ComputePipelineBuilder {
 public:
 
-	VkPipelineShaderStageCreateInfo  _shaderStage;
-	VkPipelineLayout _pipelineLayout;
+	VkPipelineShaderStageCreateInfo  shaderStage_;
+	VkPipelineLayout pipelineLayout_;
 	VkPipeline build_pipeline(VkDevice device);
 };
 struct ShaderEffect;

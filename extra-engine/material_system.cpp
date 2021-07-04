@@ -10,8 +10,8 @@ VkPipeline ComputePipelineBuilder::build_pipeline(VkDevice device)
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
 	pipelineInfo.pNext = nullptr;
 
-	pipelineInfo.stage = _shaderStage;
-	pipelineInfo.layout = _pipelineLayout;
+	pipelineInfo.stage = shaderStage_;
+	pipelineInfo.layout = pipelineLayout_;
 
 
 	VkPipeline newPipeline;

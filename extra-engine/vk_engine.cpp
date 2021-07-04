@@ -1397,8 +1397,8 @@ bool VulkanEngine::load_compute_shader(const char* shaderPath, VkPipeline& pipel
 	computeEffect->reflect_layout(device_, nullptr, 0);
 
 	ComputePipelineBuilder computeBuilder;
-	computeBuilder._pipelineLayout = computeEffect->builtLayout;
-	computeBuilder._shaderStage = vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_COMPUTE_BIT, computeModule.module);
+	computeBuilder.pipelineLayout_ = computeEffect->builtLayout;
+	computeBuilder.shaderStage_ = vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_COMPUTE_BIT, computeModule.module);
 
 
 	layout = computeEffect->builtLayout;
